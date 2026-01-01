@@ -50,7 +50,7 @@ export default function Portfolio() {
 
     <div className="flex flex-col sm:flex-row gap-4">
       <a
-        href="https://drive.google.com/file/d/1WLMU8IJyCn8HmPXjg9TiUrXymU09mA4q/view?usp=drive_link" // Replace with actual link
+        href="https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing" // Replace with actual link
         target="_blank"
         rel="noopener noreferrer"
       >
