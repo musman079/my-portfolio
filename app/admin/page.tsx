@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Edit2, Trash2, LogOut, Code2, Star, Layers, Server, Globe, Palette, GitBranch, Eye, EyeOff, Save, X } from "lucide-react"
+import { Plus, Edit2, Trash2, LogOut, Code2, Star, Layers, Server, Globe, Palette, GitBranch, Eye, EyeOff, Save, X, User, Upload } from "lucide-react"
 
 // ================================================================
 // TYPES
@@ -600,10 +600,156 @@ function ServicesTab() {
   )
 }
 
+interface ProfileData {
+  id?: string
+  avatarUrl: string
+  name: string
+  title: string
+  bio: string
+  resumeUrl: string
+  available: boolean
+}
+
+function ProfileTab() {
+  const [profile, setProfile] = useState<ProfileData>({
+    avatarUrl: "/placeholder.jpg",
+    name: "Muhammad Usman",
+    title: "Full-Stack Developer",
+    bio: "Dedicated Full-Stack Developer with a focus on the MERN stack — MongoDB, Express.js, React, and Node.js.",
+    resumeUrl: "https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing",
+    available: true,
+  })
+  const [saving, setSaving] = useState(false)
+  const [msg, setMsg] = useState("")
+
+  useEffect(() => {
+    fetch('/api/profile').then(r => r.json()).then(data => {
+      if (data && data.avatarUrl) setProfile(data)
+    })
+  }, [])
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.size > 4 * 1024 * 1024) {
+      alert("File size must be under 4MB")
+      return
+    }
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        setProfile(p => ({ ...p, avatarUrl: reader.result as string }))
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    setMsg("")
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(profile)
+      })
+      const updated = await res.json()
+      setProfile(updated)
+      setMsg("Profile & Picture updated successfully! ✅")
+      setTimeout(() => setMsg(""), 4000)
+    } catch (_) {
+      setMsg("Failed to update profile.")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div className="max-w-2xl">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-bold">Profile & Picture Settings</h2>
+      </div>
+
+      <div className="admin-card space-y-6">
+        {/* Profile Picture Preview & Upload */}
+        <div>
+          <label className="admin-label">Profile Picture (Avatar)</label>
+          <div className="flex items-center gap-6 mt-3">
+            <div className="relative w-24 h-24 rounded-full overflow-hidden border-2 flex-shrink-0"
+              style={{ borderColor: "#f59e0b", boxShadow: "0 0 16px rgba(245,158,11,0.35)" }}>
+              <img src={profile.avatarUrl || "/placeholder.jpg"} alt="Avatar Preview" className="w-full h-full object-cover" />
+            </div>
+            <div className="flex-1 space-y-3">
+              <div>
+                <label className="text-xs text-muted-foreground block mb-1">Image URL / Direct Link</label>
+                <input
+                  type="text"
+                  className="admin-input text-xs"
+                  placeholder="https://example.com/my-photo.jpg or /placeholder.jpg"
+                  value={profile.avatarUrl}
+                  onChange={e => setProfile(p => ({ ...p, avatarUrl: e.target.value }))}
+                />
+              </div>
+              <div className="flex items-center gap-3">
+                <label className="admin-btn-edit text-xs flex items-center gap-1.5 cursor-pointer">
+                  <Upload className="h-3.5 w-3.5" /> Choose Image File
+                  <input type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
+                </label>
+                <span className="text-xs text-muted-foreground">Upload from device (Max 4MB)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Name & Role */}
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="admin-label">Full Name</label>
+            <input className="admin-input" value={profile.name} onChange={e => setProfile(p => ({ ...p, name: e.target.value }))} />
+          </div>
+          <div>
+            <label className="admin-label">Title / Role</label>
+            <input className="admin-input" value={profile.title} onChange={e => setProfile(p => ({ ...p, title: e.target.value }))} />
+          </div>
+        </div>
+
+        {/* Resume URL */}
+        <div>
+          <label className="admin-label">Resume / CV Link</label>
+          <input className="admin-input" value={profile.resumeUrl} onChange={e => setProfile(p => ({ ...p, resumeUrl: e.target.value }))} />
+        </div>
+
+        {/* Bio */}
+        <div>
+          <label className="admin-label">About Bio</label>
+          <textarea className="admin-input" rows={3} value={profile.bio} onChange={e => setProfile(p => ({ ...p, bio: e.target.value }))} />
+        </div>
+
+        {/* Available Badge Toggle */}
+        <div className="flex items-center gap-3 pt-1">
+          <input type="checkbox" id="avail-check" checked={profile.available} onChange={e => setProfile(p => ({ ...p, available: e.target.checked }))} className="w-4 h-4 accent-amber-500 cursor-pointer" />
+          <label htmlFor="avail-check" className="text-sm font-medium cursor-pointer">Available for Freelance Work</label>
+        </div>
+
+        {msg && (
+          <div className="p-3 rounded-lg text-xs font-semibold" style={{ background: "rgba(34,197,94,0.15)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.3)" }}>
+            {msg}
+          </div>
+        )}
+
+        <button onClick={handleSave} disabled={saving} className="admin-btn-primary w-full flex items-center justify-center gap-2">
+          <Save className="h-4 w-4" />{saving ? "Saving..." : "Save Profile & Picture"}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 // ================================================================
 // MAIN ADMIN DASHBOARD
 // ================================================================
 const TABS = [
+  { id:"profile",  label:"Profile & Pic", icon:User },
   { id:"projects", label:"Projects", icon:Code2  },
   { id:"reviews",  label:"Reviews",  icon:Star   },
   { id:"skills",   label:"Skills",   icon:Layers },
@@ -612,11 +758,8 @@ const TABS = [
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [activeTab,  setActiveTab]  = useState<string>("projects")
+  const [activeTab,  setActiveTab]  = useState<string>("profile")
   const [mounted,    setMounted]    = useState(false)
-  
-  // Note: Tab counts could also be updated based on fetch, but to keep UI simple
-  // we are leaving the count dynamic in each tab component instead of the header for now.
 
   useEffect(() => {
     setMounted(true)
@@ -660,7 +803,7 @@ export default function AdminPage() {
       </header>
 
       <main className="max-w-6xl mx-auto px-6 py-8">
-        <div className="flex gap-2 mb-6 p-1 rounded-2xl" style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", width:"fit-content" }}>
+        <div className="flex flex-wrap gap-2 mb-6 p-1 rounded-2xl" style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", width:"fit-content" }}>
           {TABS.map(({ id, label, icon:Icon }) => (
             <button key={id} onClick={() => setActiveTab(id)}
               className={`admin-tab flex items-center gap-2 ${activeTab === id ? "active" : "inactive"}`}>
@@ -670,6 +813,7 @@ export default function AdminPage() {
         </div>
 
         <div className="admin-slide-in">
+          {activeTab === "profile"  && <ProfileTab  />}
           {activeTab === "projects" && <ProjectsTab />}
           {activeTab === "reviews"  && <ReviewsTab  />}
           {activeTab === "skills"   && <SkillsTab   />}

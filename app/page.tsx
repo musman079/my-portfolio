@@ -328,11 +328,19 @@ export default function Portfolio() {
   const [mousePos,    setMousePos]    = useState({ x:0, y:0 })
   const [isMounted,   setIsMounted]   = useState(false)
 
-  // Dynamic data from localStorage (set by admin panel)
+  // Dynamic data from MongoDB APIs
   const [dynProjects, setDynProjects] = useState(DEFAULT_PROJECTS)
   const [dynReviews,  setDynReviews]  = useState(DEFAULT_REVIEWS)
   const [dynSkills,   setDynSkills]   = useState(DEFAULT_SKILLS)
   const [dynServices, setDynServices] = useState(DEFAULT_SERVICES)
+  const [dynProfile,  setDynProfile]  = useState({
+    avatarUrl: "/placeholder.jpg",
+    name: "Muhammad Usman",
+    title: "Full-Stack Developer",
+    bio: "Dedicated Full-Stack Developer with a focus on the MERN stack — MongoDB, Express.js, React, and Node.js.",
+    resumeUrl: "https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing",
+    available: true,
+  })
 
   useEffect(() => {
     setIsMounted(true)
@@ -342,12 +350,14 @@ export default function Portfolio() {
       fetch('/api/projects').then(r => r.json()).catch(() => DEFAULT_PROJECTS),
       fetch('/api/reviews').then(r => r.json()).catch(() => DEFAULT_REVIEWS),
       fetch('/api/skills').then(r => r.json()).catch(() => DEFAULT_SKILLS),
-      fetch('/api/services').then(r => r.json()).catch(() => DEFAULT_SERVICES)
-    ]).then(([projects, reviews, skills, services]) => {
+      fetch('/api/services').then(r => r.json()).catch(() => DEFAULT_SERVICES),
+      fetch('/api/profile').then(r => r.json()).catch(() => null)
+    ]).then(([projects, reviews, skills, services, profile]) => {
       setDynProjects(Array.isArray(projects) && projects.length ? projects : DEFAULT_PROJECTS)
       setDynReviews(Array.isArray(reviews) && reviews.length ? reviews : DEFAULT_REVIEWS)
       setDynSkills(Array.isArray(skills) && skills.length ? skills : DEFAULT_SKILLS)
       setDynServices(Array.isArray(services) && services.length ? services : DEFAULT_SERVICES)
+      if (profile && profile.avatarUrl) setDynProfile(profile)
     })
   }, [])
 
@@ -526,7 +536,7 @@ export default function Portfolio() {
 
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start mb-10 animate-fade-in"
                 style={{ animationDelay:".6s" }}>
-                <a href="https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing" target="_blank" rel="noopener noreferrer">
+                <a href={dynProfile.resumeUrl || "https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing"} target="_blank" rel="noopener noreferrer">
                   <Button id="download-resume-btn" size="lg" className="gap-2 px-7 font-bold btn-primary-glow"
                     style={{ background:"linear-gradient(135deg,#f59e0b,#0ea5e9)", color:"#000", border:"none" }}>
                     <Download className="h-4 w-4" />Download Resume
@@ -687,7 +697,7 @@ export default function Portfolio() {
                   style={{ background:"radial-gradient(circle,#f59e0b,#0ea5e9)" }} />
                 <div className="relative w-72 h-72 rounded-full overflow-hidden animate-glow-amber"
                   style={{ border:"2px solid rgba(245,158,11,0.35)" }}>
-                  <Image src="/placeholder.jpg" alt="Muhammad Usman – Full Stack Developer" width={288} height={288} className="object-cover w-full h-full" />
+                  <img src={dynProfile.avatarUrl || "/placeholder.jpg"} alt={dynProfile.name || "Muhammad Usman"} className="object-cover w-full h-full" />
                 </div>
                 <div className="absolute -bottom-3 -right-3 glass px-4 py-2 rounded-2xl shadow-2xl"
                   style={{ border:"1px solid rgba(245,158,11,0.22)" }}>
