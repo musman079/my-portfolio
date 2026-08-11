@@ -11,23 +11,7 @@ import {
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
 
-// ================================================================
-// LOCALSTORAGE KEYS (shared with admin panel)
-// ================================================================
-const LS_KEYS = {
-  projects: "portfolio_projects",
-  reviews:  "portfolio_reviews",
-  skills:   "portfolio_skills",
-  services: "portfolio_services",
-}
 
-function loadLS<T>(key: string, fallback: T[]): T[] {
-  try {
-    if (typeof window === "undefined") return fallback
-    const d = localStorage.getItem(key)
-    return d ? JSON.parse(d) : fallback
-  } catch { return fallback }
-}
 
 // Icon map for skill categories (admin saves category names)
 const SKILL_ICONS: Record<string, React.ElementType> = {
@@ -352,11 +336,19 @@ export default function Portfolio() {
 
   useEffect(() => {
     setIsMounted(true)
-    // Load dynamic data from admin localStorage
-    setDynProjects(loadLS(LS_KEYS.projects, DEFAULT_PROJECTS))
-    setDynReviews( loadLS(LS_KEYS.reviews,  DEFAULT_REVIEWS))
-    setDynSkills(  loadLS(LS_KEYS.skills,   DEFAULT_SKILLS))
-    setDynServices(loadLS(LS_KEYS.services, DEFAULT_SERVICES))
+    
+    // Fetch dynamic data from MongoDB APIs
+    Promise.all([
+      fetch('/api/projects').then(r => r.json()).catch(() => DEFAULT_PROJECTS),
+      fetch('/api/reviews').then(r => r.json()).catch(() => DEFAULT_REVIEWS),
+      fetch('/api/skills').then(r => r.json()).catch(() => DEFAULT_SKILLS),
+      fetch('/api/services').then(r => r.json()).catch(() => DEFAULT_SERVICES)
+    ]).then(([projects, reviews, skills, services]) => {
+      setDynProjects(Array.isArray(projects) && projects.length ? projects : DEFAULT_PROJECTS)
+      setDynReviews(Array.isArray(reviews) && reviews.length ? reviews : DEFAULT_REVIEWS)
+      setDynSkills(Array.isArray(skills) && skills.length ? skills : DEFAULT_SKILLS)
+      setDynServices(Array.isArray(services) && services.length ? services : DEFAULT_SERVICES)
+    })
   }, [])
 
 

@@ -43,58 +43,8 @@ interface Service {
   color: string
 }
 
-// ================================================================
-// DEFAULT DATA (fallback)
-// ================================================================
-const DEFAULT_PROJECTS: Project[] = [
-  { id:"1", title:"ThinkBoard", subtitle:"MERN Notes App", description:"A modern note-taking app with markdown support, user authentication, and rate-limited APIs. Deployed on Railway.", tech:["MongoDB","Express.js","React","Node.js","Tailwind CSS"], github:"https://github.com/mani78979/mern-thinkboard", live:"https://mern-thinkboard-production-56fc.up.railway.app/", accentColor:"#f59e0b" },
-  { id:"2", title:"GeoSpatial Urbanization", subtitle:"Flutter + AI", description:"Flutter mobile app analyzing urban sprawl using satellite imagery. Predicts development patterns with TensorFlow Lite.", tech:["Flutter","Firebase","TensorFlow Lite","Dart"], github:"https://github.com/mani78979/GeoSpatial-Analysis-for-Better-Urbanization-of-Faisalabad-City", live:"", accentColor:"#0ea5e9" },
-  { id:"3", title:"Dev Portfolio", subtitle:"Next.js 15 Portfolio", description:"This portfolio — built with Next.js 15, TypeScript, Tailwind CSS, glassmorphism design, and advanced animations.", tech:["Next.js 15","TypeScript","Tailwind CSS"], github:"https://github.com/musman079/my-portfolio", live:"", accentColor:"#10b981" },
-]
-
-const DEFAULT_REVIEWS: Review[] = [
-  { id:"1", name:"john_d***", country:"🇺🇸", rating:5, review:"Exceptional work! Usman built our full-stack web app ahead of schedule with very clean code. Great communication throughout.", date:"2 weeks ago", project:"MERN Stack Web App" },
-  { id:"2", name:"sarah_m***", country:"🇬🇧", rating:5, review:"Outstanding developer! Delivered exactly what we needed for our React dashboard. Professional attitude and top-quality code.", date:"1 month ago", project:"React Dashboard" },
-  { id:"3", name:"ahmed_k***", country:"🇸🇦", rating:5, review:"Very professional and talented. Fixed our Node.js app bugs quickly and improved performance significantly. 5 stars!", date:"1 month ago", project:"Node.js Bug Fix" },
-  { id:"4", name:"lucas_b***", country:"🇩🇪", rating:5, review:"Top-tier developer. Built our MongoDB API integration flawlessly with proper documentation. Will definitely hire again.", date:"2 months ago", project:"MongoDB API Integration" },
-  { id:"5", name:"priya_s***", country:"🇮🇳", rating:5, review:"Excellent experience! Responsive, talented, and delivers quality work every time. Built our company website perfectly.", date:"2 months ago", project:"Company Website" },
-  { id:"6", name:"mike_r***", country:"🇺🇸", rating:5, review:"Usman is a rockstar developer. Understood requirements immediately and delivered a polished product. Best freelancer on Fiverr.", date:"3 months ago", project:"Full Stack E-commerce" },
-]
-
-const DEFAULT_SKILLS: Skill[] = [
-  { id:"1", category:"Frontend",        items:["React","Next.js","JavaScript","TypeScript","Tailwind CSS","HTML5","CSS3"],    color:"#f59e0b", level:90 },
-  { id:"2", category:"Backend",         items:["Node.js","Express.js","MongoDB","Firebase","REST APIs","JWT Auth"],           color:"#0ea5e9", level:85 },
-  { id:"3", category:"Design",          items:["Figma","UI/UX Design","Responsive Design","Wireframing","Glassmorphism"],    color:"#f59e0b", level:80 },
-  { id:"4", category:"Tools & Deploy",  items:["Git","GitHub","Vercel","Railway","Render","VS Code"],                        color:"#0ea5e9", level:88 },
-]
-
-const DEFAULT_SERVICES: Service[] = [
-  { id:"1", title:"Full-Stack Web Development", description:"End-to-end web apps using the MERN stack — clean architecture, secure auth, and modern UI/UX.", points:["MERN Stack Apps","SPA & SSR","Authentication"], color:"#f59e0b" },
-  { id:"2", title:"API Development",            description:"RESTful APIs with Express.js, JWT authentication, rate limiting, error handling, and documentation.",  points:["REST API Design","JWT & OAuth","Rate Limiting"], color:"#0ea5e9" },
-  { id:"3", title:"UI/UX Development",          description:"Pixel-perfect, responsive interfaces using React and Tailwind CSS — turning Figma designs into code.",   points:["Responsive Design","Figma to Code","Micro-animations"], color:"#f59e0b" },
-  { id:"4", title:"Deployment & Optimization",  description:"Deploy on Vercel, Railway, and Render with CI/CD, performance tuning, and SEO best practices.",         points:["Vercel / Railway","Performance Tuning","SEO Optimization"], color:"#0ea5e9" },
-]
-
 const ACCENT_COLORS = ["#f59e0b","#0ea5e9","#10b981","#8b5cf6","#ef4444","#ec4899","#14b8a6","#f97316"]
 const ADMIN_PASSWORD = "admin123"
-const LS = {
-  projects: "portfolio_projects",
-  reviews:  "portfolio_reviews",
-  skills:   "portfolio_skills",
-  services: "portfolio_services",
-}
-
-// ================================================================
-// HELPER FUNCTIONS
-// ================================================================
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
-
-function load<T>(key: string, fallback: T[]): T[] {
-  try { const d = localStorage.getItem(key); return d ? JSON.parse(d) : fallback } catch { return fallback }
-}
-function save(key: string, data: unknown) {
-  localStorage.setItem(key, JSON.stringify(data))
-}
 
 // ================================================================
 // LOGIN SCREEN
@@ -118,7 +68,6 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
     <div className="min-h-screen flex items-center justify-center px-4"
       style={{ background:"hsl(228,45%,5%)" }}>
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-10">
           <div className="text-3xl font-black gradient-text-animated mb-2">Admin Panel</div>
           <p className="text-sm" style={{ color:"hsl(220,12%,52%)" }}>Portfolio CMS — Muhammad Usman</p>
@@ -162,25 +111,36 @@ function ProjectsTab() {
   const [form, setForm]         = useState<Partial<Project>>({})
   const [techInput, setTechInput] = useState("")
 
-  useEffect(() => { setProjects(load(LS.projects, DEFAULT_PROJECTS)) }, [])
+  useEffect(() => {
+    fetch('/api/projects').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setProjects(data)
+    })
+  }, [])
 
   const openAdd  = () => { setForm({ accentColor:"#f59e0b", tech:[] }); setTechInput(""); setModal({ open:true, item:null }) }
   const openEdit = (p: Project) => { setForm({ ...p }); setTechInput(p.tech.join(", ")); setModal({ open:true, item:p }) }
   const closeModal = () => setModal({ open:false, item:null })
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const techArr = techInput.split(",").map(t => t.trim()).filter(Boolean)
-    const updated = { ...form, tech: techArr, id: modal.item?.id ?? uid() } as Project
-    const list = modal.item
-      ? projects.map(p => p.id === modal.item!.id ? updated : p)
-      : [...projects, updated]
-    setProjects(list); save(LS.projects, list); closeModal()
+    const payload = { ...form, tech: techArr }
+    
+    if (modal.item) {
+      const res = await fetch(`/api/projects?id=${modal.item.id}`, { method: 'PUT', body: JSON.stringify(payload) })
+      const updated = await res.json()
+      setProjects(projects.map(p => p.id === updated.id ? updated : p))
+    } else {
+      const res = await fetch('/api/projects', { method: 'POST', body: JSON.stringify(payload) })
+      const created = await res.json()
+      setProjects([...projects, created])
+    }
+    closeModal()
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Delete this project?")) return
-    const list = projects.filter(p => p.id !== id)
-    setProjects(list); save(LS.projects, list)
+    await fetch(`/api/projects?id=${id}`, { method: 'DELETE' })
+    setProjects(projects.filter(p => p.id !== id))
   }
 
   return (
@@ -217,7 +177,6 @@ function ProjectsTab() {
         ))}
       </div>
 
-      {/* Modal */}
       {modal.open && (
         <div className="admin-modal-overlay" onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
           <div className="admin-modal admin-slide-in">
@@ -282,24 +241,33 @@ function ReviewsTab() {
   const [modal, setModal]     = useState<{ open:boolean; item:Review|null }>({ open:false, item:null })
   const [form, setForm]       = useState<Partial<Review>>({})
 
-  useEffect(() => { setReviews(load(LS.reviews, DEFAULT_REVIEWS)) }, [])
+  useEffect(() => {
+    fetch('/api/reviews').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setReviews(data)
+    })
+  }, [])
 
   const openAdd  = () => { setForm({ rating:5, country:"🇺🇸" }); setModal({ open:true, item:null }) }
   const openEdit = (r: Review) => { setForm({ ...r }); setModal({ open:true, item:r }) }
   const closeModal = () => setModal({ open:false, item:null })
 
-  const handleSave = () => {
-    const updated = { ...form, id: modal.item?.id ?? uid() } as Review
-    const list = modal.item
-      ? reviews.map(r => r.id === modal.item!.id ? updated : r)
-      : [...reviews, updated]
-    setReviews(list); save(LS.reviews, list); closeModal()
+  const handleSave = async () => {
+    if (modal.item) {
+      const res = await fetch(`/api/reviews?id=${modal.item.id}`, { method: 'PUT', body: JSON.stringify(form) })
+      const updated = await res.json()
+      setReviews(reviews.map(r => r.id === updated.id ? updated : r))
+    } else {
+      const res = await fetch('/api/reviews', { method: 'POST', body: JSON.stringify(form) })
+      const created = await res.json()
+      setReviews([...reviews, created])
+    }
+    closeModal()
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Delete this review?")) return
-    const list = reviews.filter(r => r.id !== id)
-    setReviews(list); save(LS.reviews, list)
+    await fetch(`/api/reviews?id=${id}`, { method: 'DELETE' })
+    setReviews(reviews.filter(r => r.id !== id))
   }
 
   return (
@@ -338,7 +306,6 @@ function ReviewsTab() {
         ))}
       </div>
 
-      {/* Modal */}
       {modal.open && (
         <div className="admin-modal-overlay" onClick={e => { if (e.target === e.currentTarget) closeModal() }}>
           <div className="admin-modal admin-slide-in">
@@ -399,25 +366,36 @@ function SkillsTab() {
   const [form, setForm]     = useState<Partial<Skill>>({})
   const [itemInput, setItemInput] = useState("")
 
-  useEffect(() => { setSkills(load(LS.skills, DEFAULT_SKILLS)) }, [])
+  useEffect(() => {
+    fetch('/api/skills').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setSkills(data)
+    })
+  }, [])
 
   const openAdd  = () => { setForm({ color:"#f59e0b", level:80, items:[] }); setItemInput(""); setModal({ open:true, item:null }) }
   const openEdit = (s: Skill) => { setForm({ ...s }); setItemInput(s.items.join(", ")); setModal({ open:true, item:s }) }
   const closeModal = () => setModal({ open:false, item:null })
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const items = itemInput.split(",").map(t => t.trim()).filter(Boolean)
-    const updated = { ...form, items, id: modal.item?.id ?? uid() } as Skill
-    const list = modal.item
-      ? skills.map(s => s.id === modal.item!.id ? updated : s)
-      : [...skills, updated]
-    setSkills(list); save(LS.skills, list); closeModal()
+    const payload = { ...form, items }
+    
+    if (modal.item) {
+      const res = await fetch(`/api/skills?id=${modal.item.id}`, { method: 'PUT', body: JSON.stringify(payload) })
+      const updated = await res.json()
+      setSkills(skills.map(s => s.id === updated.id ? updated : s))
+    } else {
+      const res = await fetch('/api/skills', { method: 'POST', body: JSON.stringify(payload) })
+      const created = await res.json()
+      setSkills([...skills, created])
+    }
+    closeModal()
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Delete this skill category?")) return
-    const list = skills.filter(s => s.id !== id)
-    setSkills(list); save(LS.skills, list)
+    await fetch(`/api/skills?id=${id}`, { method: 'DELETE' })
+    setSkills(skills.filter(s => s.id !== id))
   }
 
   const ICONS: Record<string, React.ElementType> = { Frontend:Layers, Backend:Server, Design:Palette, "Tools & Deploy":GitBranch }
@@ -514,25 +492,36 @@ function ServicesTab() {
   const [form, setForm]         = useState<Partial<Service>>({})
   const [pointsInput, setPointsInput] = useState("")
 
-  useEffect(() => { setServices(load(LS.services, DEFAULT_SERVICES)) }, [])
+  useEffect(() => {
+    fetch('/api/services').then(r => r.json()).then(data => {
+      if (Array.isArray(data)) setServices(data)
+    })
+  }, [])
 
   const openAdd  = () => { setForm({ color:"#f59e0b", points:[] }); setPointsInput(""); setModal({ open:true, item:null }) }
   const openEdit = (s: Service) => { setForm({ ...s }); setPointsInput(s.points.join(", ")); setModal({ open:true, item:s }) }
   const closeModal = () => setModal({ open:false, item:null })
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const points = pointsInput.split(",").map(t => t.trim()).filter(Boolean)
-    const updated = { ...form, points, id: modal.item?.id ?? uid() } as Service
-    const list = modal.item
-      ? services.map(s => s.id === modal.item!.id ? updated : s)
-      : [...services, updated]
-    setServices(list); save(LS.services, list); closeModal()
+    const payload = { ...form, points }
+    
+    if (modal.item) {
+      const res = await fetch(`/api/services?id=${modal.item.id}`, { method: 'PUT', body: JSON.stringify(payload) })
+      const updated = await res.json()
+      setServices(services.map(s => s.id === updated.id ? updated : s))
+    } else {
+      const res = await fetch('/api/services', { method: 'POST', body: JSON.stringify(payload) })
+      const created = await res.json()
+      setServices([...services, created])
+    }
+    closeModal()
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm("Delete this service?")) return
-    const list = services.filter(s => s.id !== id)
-    setServices(list); save(LS.services, list)
+    await fetch(`/api/services?id=${id}`, { method: 'DELETE' })
+    setServices(services.filter(s => s.id !== id))
   }
 
   return (
@@ -625,6 +614,9 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [activeTab,  setActiveTab]  = useState<string>("projects")
   const [mounted,    setMounted]    = useState(false)
+  
+  // Note: Tab counts could also be updated based on fetch, but to keep UI simple
+  // we are leaving the count dynamic in each tab component instead of the header for now.
 
   useEffect(() => {
     setMounted(true)
@@ -645,8 +637,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen" style={{ background:"hsl(228,45%,5%)", cursor:"default" }}>
-
-      {/* TOP BAR */}
       <header className="sticky top-0 z-50 glass" style={{ borderBottom:"1px solid rgba(245,158,11,0.12)" }}>
         <div className="flex h-14 items-center justify-between px-6 max-w-6xl mx-auto">
           <div className="flex items-center gap-3">
@@ -669,27 +659,7 @@ export default function AdminPage() {
         </div>
       </header>
 
-      {/* CONTENT */}
       <main className="max-w-6xl mx-auto px-6 py-8">
-        {/* Stats row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-          {TABS.map(({ id, label, icon:Icon }) => {
-            const key = id === "projects" ? LS.projects : id === "reviews" ? LS.reviews : id === "skills" ? LS.skills : LS.services
-            const fallback = id === "projects" ? DEFAULT_PROJECTS : id === "reviews" ? DEFAULT_REVIEWS : id === "skills" ? DEFAULT_SKILLS : DEFAULT_SERVICES
-            const count = load<any>(key, fallback).length
-            return (
-              <button key={id} onClick={() => setActiveTab(id)}
-                className="admin-card text-left transition-all"
-                style={{ borderColor: activeTab === id ? "rgba(245,158,11,0.4)" : undefined, cursor:"pointer" }}>
-                <Icon className="h-5 w-5 mb-2" style={{ color: activeTab === id ? "#f59e0b" : "hsl(220,12%,50%)" }} />
-                <div className="text-2xl font-black" style={{ color: activeTab === id ? "#f59e0b" : "inherit" }}>{count}</div>
-                <div className="text-xs" style={{ color:"hsl(220,12%,50%)" }}>{label}</div>
-              </button>
-            )
-          })}
-        </div>
-
-        {/* Tab nav */}
         <div className="flex gap-2 mb-6 p-1 rounded-2xl" style={{ background:"rgba(255,255,255,0.03)", border:"1px solid rgba(255,255,255,0.06)", width:"fit-content" }}>
           {TABS.map(({ id, label, icon:Icon }) => (
             <button key={id} onClick={() => setActiveTab(id)}
@@ -699,7 +669,6 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* Tab content */}
         <div className="admin-slide-in">
           {activeTab === "projects" && <ProjectsTab />}
           {activeTab === "reviews"  && <ReviewsTab  />}
