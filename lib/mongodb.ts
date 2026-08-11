@@ -4,13 +4,14 @@ import dns from "dns";
 // Fix Windows / ISP DNS SRV resolution issue for MongoDB Atlas
 try {
   dns.setServers(["8.8.8.8", "1.1.1.1"]);
-} catch (_) {}
+} catch (_) { }
 
 const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || process.env.MONGODB_URL;
 
 if (!MONGODB_URI) {
   throw new Error("Please define the MONGODB_URI, DATABASE_URL, or MONGODB_URL environment variable inside .env.local");
 }
+
 
 let cached = (global as any).mongoose;
 
