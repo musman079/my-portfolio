@@ -1078,8 +1078,8 @@ export default function Portfolio() {
 
             <div className="flex justify-center reveal-right">
               <TiltCard className="relative">
-                <div className="absolute inset-0 rounded-full blur-3xl opacity-25"
-                  style={{ background:"radial-gradient(circle,#f59e0b,#0ea5e9)" }} />
+                <div className="absolute inset-0 rounded-full opacity-35 pointer-events-none"
+                  style={{ background:"radial-gradient(circle, rgba(245,158,11,0.3) 0%, rgba(14,165,233,0.2) 45%, transparent 70%)" }} />
                 <div className="relative w-72 h-72 rounded-full overflow-hidden animate-glow-amber"
                   style={{ border:"2px solid rgba(245,158,11,0.35)" }}>
                   <img src={dynProfile.avatarUrl || "/placeholder.jpg"} alt={dynProfile.name || "Muhammad Usman"} className="object-cover w-full h-full" />
@@ -1428,10 +1428,10 @@ export default function Portfolio() {
       {/* ====== CONTACT & INQUIRY HUB ====== */}
       <section id="contact" className="py-28 relative overflow-hidden">
         <span className="section-number" aria-hidden>08</span>
-        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full -z-10"
-          style={{ background:"radial-gradient(circle,rgba(245,158,11,0.07) 0%,transparent 70%)", filter:"blur(70px)" }} />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full -z-10"
-          style={{ background:"radial-gradient(circle,rgba(14,165,233,0.07) 0%,transparent 70%)", filter:"blur(70px)" }} />
+        <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full -z-10 pointer-events-none"
+          style={{ background:"radial-gradient(circle, rgba(245,158,11,0.09) 0%, rgba(245,158,11,0.02) 50%, transparent 70%)" }} />
+        <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full -z-10 pointer-events-none"
+          style={{ background:"radial-gradient(circle, rgba(14,165,233,0.09) 0%, rgba(14,165,233,0.02) 50%, transparent 70%)" }} />
 
         <div className="container px-6 mx-auto max-w-4xl relative z-10">
           <div className="text-center mb-16 reveal">
