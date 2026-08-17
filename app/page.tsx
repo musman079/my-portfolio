@@ -16,6 +16,7 @@ import { DevTerminal } from "@/components/dev-terminal"
 import { CommandPalette } from "@/components/command-palette"
 import { ProjectModal, ProjectDetail } from "@/components/project-modal"
 import { CostEstimator } from "@/components/cost-estimator"
+import { DEFAULT_SITE_CONFIG } from "@/lib/site-config"
 import {
   playClickSound,
   playHoverSound,
@@ -76,21 +77,6 @@ function TechBadge({ label }: { label: string }) {
 // ================================================================
 // DEFAULT DATA
 // ================================================================
-const ROLES = [
-  "Full-Stack Developer",
-  "MERN Stack Specialist",
-  "Fiverr Level-1 Freelancer",
-  "UI/UX Engineering Enthusiast",
-  "Next.js & React Architect",
-]
-
-const STATS = [
-  { label: "Projects Built",    icon: Code2,     color: "#f59e0b", num: 12,  suffix: "+"         },
-  { label: "Happy Clients",     icon: Users,     color: "#0ea5e9", num: 15,  suffix: "+"         },
-  { label: "Fiverr Rating",     icon: Star,      color: "#fbbf24", num: 5.0, suffix: "★", isFloat: true },
-  { label: "On-Time Delivery",  icon: Award,     color: "#10b981", num: 100, suffix: "%"         },
-]
-
 const DEFAULT_SKILLS = [
   { id:"1", category:"Frontend",         items:["React.js","Next.js 15","TypeScript","JavaScript","Tailwind CSS","Redux","HTML5/CSS3"], color:"#06b6d4", level:92 },
   { id:"2", category:"Backend",          items:["Node.js","Express.js","REST APIs","JWT Authentication","WebSockets","Middleware"],      color:"#10b981", level:88 },
@@ -116,6 +102,7 @@ const DEFAULT_PROJECTS: ProjectDetail[] = [
     github: "https://github.com/mani78979/mern-thinkboard",
     live: "https://mern-thinkboard-production-56fc.up.railway.app/",
     accentColor: "#f59e0b",
+    details: ["JWT Authentication with refresh tokens", "Full markdown syntax parser", "Rate-limited Express.js REST APIs"],
   },
   {
     id: "2",
@@ -127,6 +114,7 @@ const DEFAULT_PROJECTS: ProjectDetail[] = [
     github: "https://github.com/mani78979/GeoSpatial-Analysis-for-Better-Urbanization-of-Faisalabad-City",
     live: "",
     accentColor: "#0ea5e9",
+    details: ["TensorFlow Lite offline machine learning model", "Interactive GeoJSON maps", "Firebase cloud synchronization"],
   },
   {
     id: "3",
@@ -138,6 +126,7 @@ const DEFAULT_PROJECTS: ProjectDetail[] = [
     github: "https://github.com/musman079/my-portfolio",
     live: "",
     accentColor: "#10b981",
+    details: ["120 FPS hardware acceleration", "Web Audio API synthesizer", "MongoDB Admin CMS Dashboard"],
   },
 ]
 
@@ -148,41 +137,6 @@ const DEFAULT_REVIEWS = [
   { id:"4", name:"lucas_b***", country:"🇩🇪 Germany",        rating:5, review:"Top-tier developer. Built our MongoDB API integration flawlessly with proper documentation. Will definitely hire again.",        date:"2 months ago", project:"MongoDB API Integration"  },
   { id:"5", name:"priya_s***", country:"🇮🇳 India",          rating:5, review:"Excellent experience! Responsive, talented, and delivers quality work every time. Built our company website perfectly.",         date:"2 months ago", project:"Company Website"          },
   { id:"6", name:"mike_r***",  country:"🇺🇸 United States", rating:5, review:"Usman is a rockstar developer. Understood requirements immediately and delivered a polished product. Best freelancer on Fiverr.", date:"3 months ago", project:"Full Stack E-commerce"     },
-]
-
-const JOURNEY_STEPS = [
-  {
-    year: "2024 — Present",
-    title: "Freelance Full-Stack Developer",
-    subtitle: "Fiverr Level-1 Seller (5.0★ Rating)",
-    description: "Delivering end-to-end full-stack web applications for global clients with 100% on-time completion, specializing in MERN stack and Next.js.",
-    badge: "Active",
-    color: "#f59e0b",
-  },
-  {
-    year: "2023 — 2024",
-    title: "Full-Stack Web Specialization",
-    subtitle: "MERN Stack & Next.js Ecosystem",
-    description: "Deep dive into scalable RESTful API design, JWT authentication, MongoDB optimization, and modern React 19 / Next.js architecture.",
-    badge: "Milestone",
-    color: "#0ea5e9",
-  },
-  {
-    year: "2022 — 2023",
-    title: "Mobile & Machine Learning Research",
-    subtitle: "Satellite Imagery & Urban Sprawl Analysis",
-    description: "Engineered cross-platform mobile apps using Flutter and integrated offline-capable TensorFlow Lite machine learning models for satellite image analysis.",
-    badge: "Research",
-    color: "#10b981",
-  },
-  {
-    year: "2021 — 2025",
-    title: "BS Computer Science",
-    subtitle: "Undergraduate Degree",
-    description: "Comprehensive computer science education focusing on Data Structures, Algorithms, Database Management Systems, and Software Architecture.",
-    badge: "Degree",
-    color: "#8b5cf6",
-  },
 ]
 
 const TECH_STACK = [
@@ -201,71 +155,6 @@ const NAV_LINKS = [
   { label:"Reviews",    id:"reviews"   },
   { label:"Contact",    id:"contact"   },
 ]
-
-// ================================================================
-// HIGH PERFORMANCE CUSTOM CURSOR (Hardware-Accelerated Lerp)
-// ================================================================
-function CustomCursor() {
-  const dotRef  = useRef<HTMLDivElement>(null)
-  const ringRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    let mx = -100, my = -100, rx = -100, ry = -100
-    let rafId: number
-
-    const onMove = (e: MouseEvent) => {
-      mx = e.clientX
-      my = e.clientY
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${mx - 4}px, ${my - 4}px, 0)`
-      }
-    }
-
-    const tick = () => {
-      rx += (mx - rx) * 0.22
-      ry += (my - ry) * 0.22
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${rx - 18}px, ${ry - 18}px, 0)`
-      }
-      rafId = requestAnimationFrame(tick)
-    }
-
-    const onEnter = () => {
-      dotRef.current?.classList.add("cursor-hover")
-      ringRef.current?.classList.add("cursor-hover")
-      playHoverSound()
-    }
-    const onLeave = () => {
-      dotRef.current?.classList.remove("cursor-hover")
-      ringRef.current?.classList.remove("cursor-hover")
-    }
-
-    window.addEventListener("mousemove", onMove, { passive: true })
-    rafId = requestAnimationFrame(tick)
-
-    const interactiveElements = document.querySelectorAll("a, button, input, textarea, [role='button']")
-    interactiveElements.forEach(el => {
-      el.addEventListener("mouseenter", onEnter)
-      el.addEventListener("mouseleave", onLeave)
-    })
-
-    return () => {
-      window.removeEventListener("mousemove", onMove)
-      cancelAnimationFrame(rafId)
-      interactiveElements.forEach(el => {
-        el.removeEventListener("mouseenter", onEnter)
-        el.removeEventListener("mouseleave", onLeave)
-      })
-    }
-  }, [])
-
-  return (
-    <>
-      <div ref={dotRef}  className="cursor-dot"  aria-hidden />
-      <div ref={ringRef} className="cursor-ring" aria-hidden />
-    </>
-  )
-}
 
 // ================================================================
 // HIGH PERFORMANCE INTERACTIVE CONSTELLATION CANVAS (120 FPS)
@@ -442,7 +331,7 @@ function TechMarquee() {
 }
 
 // ================================================================
-// SPOTLIGHT CARD (Lightweight CSS Variable Update)
+// SPOTLIGHT CARD
 // ================================================================
 function SpotlightCard({ children, className, style, onClick }: { children:React.ReactNode; className?:string; style?:React.CSSProperties; onClick?: () => void }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -488,7 +377,7 @@ function TiltCard({ children, className, style }: { children:React.ReactNode; cl
 // ================================================================
 // CODE WINDOW (Hero decoration with CLI trigger)
 // ================================================================
-function CodeWindow({ onOpenTerminal }: { onOpenTerminal: () => void }) {
+function CodeWindow({ onOpenTerminal, devName }: { onOpenTerminal: () => void; devName: string }) {
   return (
     <div className="code-window animate-float cursor-pointer group" style={{ animationDuration:"6s" }} onClick={onOpenTerminal}>
       <div className="code-window-header flex items-center justify-between">
@@ -505,7 +394,7 @@ function CodeWindow({ onOpenTerminal }: { onOpenTerminal: () => void }) {
       <div className="code-body" style={{ color:"rgba(255,255,255,0.85)" }}>
         <span className="code-line"><span className="cm">// Full-Stack Architect Profile</span></span>
         <span className="code-line"><span className="ck">export const</span> <span className="cv">developer</span> <span className="cp">= {"{"}</span></span>
-        <span className="code-line">{"  "}<span className="cv">name</span><span className="cp">:</span> <span className="cs">&quot;Muhammad Usman&quot;</span><span className="cp">,</span></span>
+        <span className="code-line">{"  "}<span className="cv">name</span><span className="cp">:</span> <span className="cs">&quot;{devName}&quot;</span><span className="cp">,</span></span>
         <span className="code-line">{"  "}<span className="cv">stack</span><span className="cp">: [</span><span className="cs">&quot;MERN&quot;</span><span className="cp">,</span> <span className="cs">&quot;Next.js 15&quot;</span><span className="cp">,</span> <span className="cs">&quot;TypeScript&quot;</span><span className="cp">],</span></span>
         <span className="code-line">{"  "}<span className="cv">rating</span><span className="cp">:</span> <span className="cs">&quot;5.0 ★ on Fiverr&quot;</span><span className="cp">,</span></span>
         <span className="code-line">{"  "}<span className="cv">status</span><span className="cp">:</span> <span className="cs">&quot;Available for Hire&quot;</span><span className="cp">,</span></span>
@@ -549,19 +438,12 @@ export default function Portfolio() {
   })
   const [contactStatus, setContactStatus] = useState<"idle" | "sent">("idle")
 
-  // Dynamic data
+  // Dynamic Data from MongoDB APIs
   const [dynProjects, setDynProjects] = useState<ProjectDetail[]>(DEFAULT_PROJECTS)
   const [dynReviews, setDynReviews] = useState(DEFAULT_REVIEWS)
   const [dynSkills, setDynSkills] = useState(DEFAULT_SKILLS)
   const [dynServices, setDynServices] = useState(DEFAULT_SERVICES)
-  const [dynProfile, setDynProfile] = useState({
-    avatarUrl: "/placeholder.jpg",
-    name: "Muhammad Usman",
-    title: "Full-Stack Developer",
-    bio: "Dedicated Full-Stack Developer with a focus on the MERN stack — MongoDB, Express.js, React, and Node.js.",
-    resumeUrl: "https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing",
-    available: true,
-  })
+  const [dynProfile, setDynProfile] = useState(DEFAULT_SITE_CONFIG)
 
   // Keyboard shortcut for Command Palette (Ctrl+K or Cmd+K)
   useEffect(() => {
@@ -585,19 +467,20 @@ export default function Portfolio() {
       fetch('/api/reviews').then(r => r.json()).catch(() => DEFAULT_REVIEWS),
       fetch('/api/skills').then(r => r.json()).catch(() => DEFAULT_SKILLS),
       fetch('/api/services').then(r => r.json()).catch(() => DEFAULT_SERVICES),
-      fetch('/api/profile').then(r => r.json()).catch(() => null)
+      fetch('/api/profile').then(r => r.json()).catch(() => DEFAULT_SITE_CONFIG)
     ]).then(([projects, reviews, skills, services, profile]) => {
       if (Array.isArray(projects) && projects.length) setDynProjects(projects)
       if (Array.isArray(reviews) && reviews.length) setDynReviews(reviews)
       if (Array.isArray(skills) && skills.length) setDynSkills(skills)
       if (Array.isArray(services) && services.length) setDynServices(services)
-      if (profile && profile.avatarUrl) setDynProfile(profile)
+      if (profile && profile.name) setDynProfile({ ...DEFAULT_SITE_CONFIG, ...profile })
     })
   }, [])
 
   // Typing animation
+  const roles = dynProfile.typingRoles && dynProfile.typingRoles.length ? dynProfile.typingRoles : DEFAULT_SITE_CONFIG.typingRoles
   useEffect(() => {
-    const role = ROLES[roleIndex]
+    const role = roles[roleIndex % roles.length]
     const speed = isDeleting ? 35 : 95
     const t = setTimeout(() => {
       if (!isDeleting) {
@@ -605,11 +488,11 @@ export default function Portfolio() {
         else setTimeout(() => setIsDeleting(true), 2400)
       } else {
         if (typingText.length > 0) setTypingText(role.slice(0, typingText.length - 1))
-        else { setIsDeleting(false); setRoleIndex(p => (p + 1) % ROLES.length) }
+        else { setIsDeleting(false); setRoleIndex(p => (p + 1) % roles.length) }
       }
     }, speed)
     return () => clearTimeout(t)
-  }, [typingText, roleIndex, isDeleting])
+  }, [typingText, roleIndex, isDeleting, roles])
 
   // 120 FPS Scroll Handler & Progress Bar
   useEffect(() => {
@@ -701,7 +584,7 @@ export default function Portfolio() {
 
   const handleCopyEmail = () => {
     playSuccessSound()
-    navigator.clipboard.writeText("usmankousar772@gmail.com")
+    navigator.clipboard.writeText(dynProfile.email || "usmankousar772@gmail.com")
     setCopiedEmail(true)
     setTimeout(() => setCopiedEmail(false), 2500)
   }
@@ -725,10 +608,13 @@ export default function Portfolio() {
     return true
   })
 
+  // Dynamic stats & milestones
+  const statsList = dynProfile.stats && dynProfile.stats.length ? dynProfile.stats : DEFAULT_SITE_CONFIG.stats
+  const journeyList = dynProfile.journey && dynProfile.journey.length ? dynProfile.journey : DEFAULT_SITE_CONFIG.journey
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden selection:bg-amber-500/30 selection:text-amber-500">
       <div className="noise-overlay" aria-hidden />
-      {isMounted && <CustomCursor />}
       <div ref={progressBarRef} className="scroll-progress" style={{ width: "0%" }} aria-hidden />
 
       {/* ====== MODALS & TOOLS ====== */}
@@ -899,16 +785,18 @@ export default function Portfolio() {
               style={{ transform:`translate3d(calc(var(--mouse-x, 0) * -5px), calc(var(--mouse-y, 0) * -3px), 0)` }}>
 
               {/* Available for freelance badge */}
-              <div id="availability-badge" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in shadow-[0_0_20px_rgba(34,197,94,0.15)]"
-                style={{ border:"1px solid rgba(34,197,94,0.4)", background:"rgba(34,197,94,0.09)", color:"#4ade80" }}>
-                <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse-dot" />
-                Available for Freelance & Full-Stack Roles
-              </div>
+              {dynProfile.available && (
+                <div id="availability-badge" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in shadow-[0_0_20px_rgba(34,197,94,0.15)]"
+                  style={{ border:"1px solid rgba(34,197,94,0.4)", background:"rgba(34,197,94,0.09)", color:"#4ade80" }}>
+                  <span className="w-2.5 h-2.5 rounded-full bg-green-400 animate-pulse-dot" />
+                  {dynProfile.availableText || "Available for Freelance & Full-Stack Roles"}
+                </div>
+              )}
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-4 leading-[1.15] tracking-tight animate-fade-in text-foreground"
                 style={{ animationDelay:".15s" }}>
                 Hi, I&apos;m{" "}
-                <span className="gradient-text-animated">Muhammad Usman</span>
+                <span className="gradient-text-animated">{dynProfile.name || "Muhammad Usman"}</span>
               </h1>
 
               <div className="flex items-center justify-center lg:justify-start gap-2 text-xl sm:text-2xl lg:text-3xl font-semibold mb-6 h-10 animate-fade-in"
@@ -921,7 +809,7 @@ export default function Portfolio() {
 
               <p className="text-base sm:text-lg text-foreground/80 max-w-xl mb-8 leading-relaxed animate-fade-in"
                 style={{ animationDelay:".45s" }}>
-                Full-Stack MERN & Next.js Engineer crafting scalable, ultra-fast web applications with clean code, secure APIs, and responsive, interactive interfaces.
+                {dynProfile.bio || "Full-Stack MERN & Next.js Engineer crafting scalable, ultra-fast web applications with clean code, secure APIs, and responsive, interactive interfaces."}
               </p>
 
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start mb-10 animate-fade-in"
@@ -941,9 +829,9 @@ export default function Portfolio() {
               {/* Social Channels */}
               <div className="flex items-center justify-center lg:justify-start gap-3 animate-fade-in" style={{ animationDelay:".75s" }}>
                 {[
-                  { href:"http://github.com/mani78979",         icon:<Github   className="h-[18px] w-[18px]" />, label:"GitHub"   },
-                  { href:"http://www.linkedin.com/in/musman78", icon:<Linkedin className="h-[18px] w-[18px]" />, label:"LinkedIn" },
-                  { href:"mailto:usmankousar772@gmail.com",     icon:<Mail     className="h-[18px] w-[18px]" />, label:"Email"    },
+                  { href: dynProfile.github || "http://github.com/mani78979",         icon:<Github   className="h-[18px] w-[18px]" />, label:"GitHub"   },
+                  { href: dynProfile.linkedin || "http://www.linkedin.com/in/musman78", icon:<Linkedin className="h-[18px] w-[18px]" />, label:"LinkedIn" },
+                  { href: `mailto:${dynProfile.email || "usmankousar772@gmail.com"}`,   icon:<Mail     className="h-[18px] w-[18px]" />, label:"Email"    },
                 ].map(({ href, icon, label }) => (
                   <a key={label} href={href} target={href.startsWith("mailto") ? "_self" : "_blank"} rel="noopener noreferrer"
                     aria-label={label} className="p-3 rounded-xl text-muted-foreground hover:text-foreground transition-all duration-200 social-icon border border-border bg-card"
@@ -952,7 +840,7 @@ export default function Portfolio() {
                   </a>
                 ))}
                 {/* Fiverr */}
-                <a href="https://www.fiverr.com/musman079" target="_blank" rel="noopener noreferrer" aria-label="Fiverr"
+                <a href={dynProfile.fiverrUrl || "https://www.fiverr.com/musman079"} target="_blank" rel="noopener noreferrer" aria-label="Fiverr"
                   className="p-3 rounded-xl text-muted-foreground hover:text-green-500 transition-all duration-200 social-icon border border-border bg-card"
                 >
                   <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="currentColor">
@@ -966,13 +854,13 @@ export default function Portfolio() {
             <div className="lg:col-span-5 flex justify-center lg:justify-end mt-4 lg:mt-0 relative z-10 will-change-transform"
               style={{ transform:`translate3d(calc(var(--mouse-x, 0) * -10px), calc(var(--mouse-y, 0) * 6px), 0)` }}>
               <div className="relative w-full flex justify-center lg:justify-end">
-                <CodeWindow onOpenTerminal={() => setTerminalOpen(true)} />
+                <CodeWindow onOpenTerminal={() => setTerminalOpen(true)} devName={dynProfile.name || "Muhammad Usman"} />
 
                 {/* Floating Badges */}
                 <div className="absolute -bottom-3 -left-3 glass px-3.5 py-2 rounded-2xl shadow-xl hidden sm:flex items-center gap-2 text-xs font-semibold"
                   style={{ border:"1px solid rgba(245,158,11,0.3)" }}>
                   <Star className="h-4 w-4 text-amber-500 fill-amber-500" />
-                  <span>5.0 Rating on Fiverr</span>
+                  <span>{dynProfile.fiverrRating || "5.0"} Rating on Fiverr</span>
                 </div>
                 <div className="absolute -top-3 -right-3 glass px-3.5 py-2 rounded-2xl shadow-xl hidden sm:flex items-center gap-2 text-xs font-semibold"
                   style={{ border:"1px solid rgba(14,165,233,0.3)" }}>
@@ -999,12 +887,12 @@ export default function Portfolio() {
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-amber-500/5 via-sky-500/5 to-emerald-500/5" />
         <div className="container px-6 mx-auto max-w-5xl">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5 text-center">
-            {STATS.map(({ label, icon:Icon, color, num, suffix, isFloat }, i) => (
+            {statsList.map(({ label, color, num, suffix, isFloat }, i) => (
               <TiltCard key={label} className="rounded-2xl p-6 flex flex-col items-center gap-3 reveal glass-card"
                 style={{ transitionDelay:`${i * 0.08}s` }}>
                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
                   style={{ background:`${color}14`, border:`1px solid ${color}28`, boxShadow:`0 0 22px ${color}18` }}>
-                  <Icon className="h-6 w-6" style={{ color }} />
+                  <Code2 className="h-6 w-6" style={{ color }} />
                 </div>
                 <div className="text-3xl font-bold" style={{ color, textShadow:`0 0 18px ${color}55` }}>
                   <AnimatedCounter num={num} suffix={suffix} isFloat={isFloat} />
@@ -1027,38 +915,31 @@ export default function Portfolio() {
         <div className="container px-6 mx-auto max-w-5xl relative z-10">
           <div className="text-center mb-16 reveal">
             <span className="section-label" style={{ color:"#f59e0b", borderColor:"rgba(245,158,11,0.3)" }}>Who I Am</span>
-            <h2 className="text-4xl sm:text-5xl font-bold mt-2 tracking-tight text-foreground">About Me</h2>
+            <h2 className="text-4xl sm:text-5xl font-bold mt-2 tracking-tight text-foreground">{dynProfile.aboutHeading || "About Me"}</h2>
           </div>
           <div className="grid gap-14 md:grid-cols-2 items-center">
             <div className="space-y-5 reveal-left">
               <p className="text-foreground text-lg leading-relaxed font-medium">
-                I&apos;m a dedicated{" "}
-                <span style={{ color:"#f59e0b" }} className="font-semibold neon-text">Full-Stack MERN Engineer</span>{" "}
-                who specializes in designing scalable, secure web architectures and highly-responsive user interfaces.
+                {dynProfile.aboutParagraph1}
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                From developing complex multi-tier full stack applications to optimizing REST APIs and crafting Figma-accurate React/Next.js interfaces, I take pride in delivering software that performs flawlessly.
+                {dynProfile.aboutParagraph2}
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                As a Level-1 freelancer on <span style={{ color:"#1dbf73" }} className="font-semibold">Fiverr</span> with a consistent <span style={{ color:"#fbbf24" }}>5.0★ rating</span>, I have successfully collaborated with businesses and founders across the USA, UK, Germany, and beyond.
+                {dynProfile.aboutParagraph3}
               </p>
 
               {/* Location Badge */}
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-mono text-muted-foreground bg-card border border-border">
                 <MapPin className="w-3.5 h-3.5 text-amber-500" />
-                <span>Faisalabad, Pakistan • Working with Global Clients</span>
+                <span>{dynProfile.location || "Faisalabad, Pakistan • Working with Global Clients"}</span>
               </div>
 
               {/* Info cards grid */}
               <div className="grid grid-cols-2 gap-3 pt-2">
-                {[
-                  { icon:Coffee,   label:"MERN Architecture",    color:"#f59e0b" },
-                  { icon:Sparkles, label:"Figma to Pixel-Code",  color:"#06b6d4" },
-                  { icon:Terminal, label:"REST API & JWT Auth",  color:"#10b981" },
-                  { icon:Globe,    label:"Fiverr Level-1 Pro",   color:"#ec4899" },
-                ].map(({ icon:Icon, label, color }) => (
+                {(dynProfile.aboutBadges || DEFAULT_SITE_CONFIG.aboutBadges).map(({ label, color }) => (
                   <div key={label} className="info-card flex items-center gap-2.5">
-                    <Icon className="h-4 w-4 flex-shrink-0" style={{ color }} />
+                    <Sparkles className="h-4 w-4 flex-shrink-0" style={{ color }} />
                     <span className="text-xs font-medium text-foreground">{label}</span>
                   </div>
                 ))}
@@ -1084,16 +965,18 @@ export default function Portfolio() {
                   style={{ border:"2px solid rgba(245,158,11,0.35)" }}>
                   <img src={dynProfile.avatarUrl || "/placeholder.jpg"} alt={dynProfile.name || "Muhammad Usman"} className="object-cover w-full h-full" />
                 </div>
-                <div className="absolute -bottom-3 -right-3 glass px-4 py-2 rounded-2xl shadow-2xl"
-                  style={{ border:"1px solid rgba(245,158,11,0.22)" }}>
-                  <div className="flex items-center gap-2 text-sm font-medium">
-                    <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot" />Available Now
+                {dynProfile.available && (
+                  <div className="absolute -bottom-3 -right-3 glass px-4 py-2 rounded-2xl shadow-2xl"
+                    style={{ border:"1px solid rgba(245,158,11,0.22)" }}>
+                    <div className="flex items-center gap-2 text-sm font-medium">
+                      <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse-dot" />Available Now
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="absolute -top-3 -left-3 glass px-3 py-1.5 rounded-2xl shadow-2xl"
                   style={{ border:"1px solid rgba(29,191,115,0.3)", background:"rgba(29,191,115,0.09)" }}>
                   <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color:"#1dbf73" }}>
-                    <Star className="h-3 w-3 fill-current" /> 5.0 on Fiverr
+                    <Star className="h-3 w-3 fill-current" /> {dynProfile.fiverrRating || "5.0"} on Fiverr
                   </div>
                 </div>
               </TiltCard>
@@ -1117,7 +1000,7 @@ export default function Portfolio() {
 
           <div className="relative pl-6 sm:pl-8 space-y-10 reveal">
             <div className="timeline-line" />
-            {JOURNEY_STEPS.map((step, idx) => (
+            {journeyList.map((step, idx) => (
               <div key={idx} className="timeline-item relative">
                 <div className="timeline-dot" style={{ background: step.color, boxShadow: `0 0 16px ${step.color}` }} />
                 <SpotlightCard className="rounded-2xl p-6 sm:p-7 ml-4 glass-card border border-border">
@@ -1327,7 +1210,7 @@ export default function Portfolio() {
           </div>
 
           <div className="text-center mt-10 reveal">
-            <a href="https://github.com/mani78979" target="_blank" rel="noopener noreferrer">
+            <a href={dynProfile.github || "https://github.com/mani78979"} target="_blank" rel="noopener noreferrer">
               <Button variant="outline" className="gap-2 group border-sky-500/30 text-sky-600 dark:text-sky-400 bg-sky-500/5 hover:bg-sky-500/10">
                 <Github className="h-4 w-4" /> View Complete GitHub Portfolio
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -1351,6 +1234,7 @@ export default function Portfolio() {
 
           <div className="reveal">
             <CostEstimator
+              rates={dynProfile.estimatorRates}
               onSelectQuote={details => {
                 setContactForm(prev => ({
                   ...prev,
@@ -1379,12 +1263,12 @@ export default function Portfolio() {
           <div className="flex flex-wrap items-center justify-center gap-5 mb-12 glass-card rounded-2xl px-8 py-5 max-w-xl mx-auto reveal">
             <div className="flex items-center gap-2">
               <div className="flex gap-0.5">{[1,2,3,4,5].map(s => <Star key={s} className="h-5 w-5 fill-yellow-400 star-gold" />)}</div>
-              <span className="font-bold text-xl text-foreground">5.0</span>
+              <span className="font-bold text-xl text-foreground">{dynProfile.fiverrRating || "5.0"}</span>
             </div>
             <div className="w-px h-8 bg-border" />
-            <div className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">Level 1</span> Fiverr Seller</div>
+            <div className="text-sm text-muted-foreground"><span className="font-semibold text-foreground">{dynProfile.fiverrLevel || "Level 1"}</span> Fiverr Seller</div>
             <div className="w-px h-8 bg-border" />
-            <a href="https://www.fiverr.com/musman079" target="_blank" rel="noopener noreferrer">
+            <a href={dynProfile.fiverrUrl || "https://www.fiverr.com/musman079"} target="_blank" rel="noopener noreferrer">
               <Button size="sm" className="gap-1.5 text-xs btn-fiverr">View Profile <ExternalLink className="h-3 w-3" /></Button>
             </a>
           </div>
@@ -1416,7 +1300,7 @@ export default function Portfolio() {
             ))}
           </div>
           <div className="text-center mt-10 reveal">
-            <a href="https://www.fiverr.com/musman079" target="_blank" rel="noopener noreferrer">
+            <a href={dynProfile.fiverrUrl || "https://www.fiverr.com/musman079"} target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="gap-2 px-8 btn-fiverr">See All Reviews on Fiverr <ExternalLink className="h-4 w-4" /></Button>
             </a>
           </div>
@@ -1455,7 +1339,7 @@ export default function Portfolio() {
                     </div>
                     <div>
                       <div className="text-xs font-mono text-muted-foreground">Direct Email</div>
-                      <div className="text-sm font-semibold text-foreground">usmankousar772@gmail.com</div>
+                      <div className="text-sm font-semibold text-foreground">{dynProfile.email || "usmankousar772@gmail.com"}</div>
                     </div>
                   </div>
                   <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-muted-foreground group-hover:text-amber-500 transition-colors">
@@ -1469,7 +1353,7 @@ export default function Portfolio() {
 
               {/* WhatsApp / Direct Chat */}
               <a
-                href="https://wa.me/923286596772"
+                href={dynProfile.whatsappUrl || "https://wa.me/923286596772"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass-card rounded-2xl p-5 block hover:border-emerald-500/50 transition-all group"
@@ -1481,7 +1365,7 @@ export default function Portfolio() {
                     </div>
                     <div>
                       <div className="text-xs font-mono text-muted-foreground">WhatsApp Chat</div>
-                      <div className="text-sm font-semibold text-foreground">+92 328 6596772</div>
+                      <div className="text-sm font-semibold text-foreground">{dynProfile.whatsapp || "+92 328 6596772"}</div>
                     </div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-emerald-500 transition-colors" />
@@ -1490,7 +1374,7 @@ export default function Portfolio() {
 
               {/* Fiverr Profile Direct */}
               <a
-                href="https://www.fiverr.com/musman079"
+                href={dynProfile.fiverrUrl || "https://www.fiverr.com/musman079"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass-card rounded-2xl p-5 block hover:border-emerald-500/50 transition-all group"
@@ -1502,7 +1386,7 @@ export default function Portfolio() {
                     </div>
                     <div>
                       <div className="text-xs font-mono text-muted-foreground">Fiverr Seller</div>
-                      <div className="text-sm font-semibold text-foreground">fiverr.com/musman079</div>
+                      <div className="text-sm font-semibold text-foreground">fiverr.com/{dynProfile.fiverrUrl?.split('/').pop() || "musman079"}</div>
                     </div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-[#1dbf73] transition-colors" />
@@ -1604,16 +1488,20 @@ export default function Portfolio() {
               <span className="text-xl font-bold gradient-text-animated glitch-text font-mono" data-text="<M.Usman />">
                 {"<M.Usman />"}
               </span>
-              <p className="text-xs text-muted-foreground mt-1">Full-Stack MERN Developer • Available for Global Freelance Work</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {dynProfile.footerBio || "Full-Stack MERN Developer • Available for Global Freelance Work"}
+              </p>
             </div>
 
-            <p className="text-xs text-muted-foreground text-center">&copy; {new Date().getFullYear()} Muhammad Usman. Built with Next.js 15 & Tailwind CSS.</p>
+            <p className="text-xs text-muted-foreground text-center">
+              &copy; {new Date().getFullYear()} {dynProfile.copyrightText || "Muhammad Usman. Built with Next.js 15 & Tailwind CSS."}
+            </p>
 
             <div className="flex items-center gap-3">
               {[
-                { href:"https://github.com/mani78979",         icon:<Github   className="h-4 w-4" />, label:"GitHub"   },
-                { href:"https://www.linkedin.com/in/musman78", icon:<Linkedin className="h-4 w-4" />, label:"LinkedIn" },
-                { href:"mailto:usmankousar772@gmail.com",      icon:<Mail     className="h-4 w-4" />, label:"Email"    },
+                { href: dynProfile.github || "https://github.com/mani78979",         icon:<Github   className="h-4 w-4" />, label:"GitHub"   },
+                { href: dynProfile.linkedin || "https://www.linkedin.com/in/musman78", icon:<Linkedin className="h-4 w-4" />, label:"LinkedIn" },
+                { href: `mailto:${dynProfile.email || "usmankousar772@gmail.com"}`,      icon:<Mail     className="h-4 w-4" />, label:"Email"    },
               ].map(({ href, icon, label }) => (
                 <a key={label} href={href} target={href.startsWith("mailto") ? "_self" : "_blank"} rel="noopener noreferrer"
                   aria-label={label} className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground transition-colors social-icon border border-border bg-card"

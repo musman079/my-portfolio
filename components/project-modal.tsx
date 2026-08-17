@@ -18,6 +18,7 @@ export interface ProjectDetail {
   live: string
   accentColor: string
   highlights?: string[]
+  details?: string[]
 }
 
 const PROJECT_EXTENDED_INFO: Record<string, { longDescription: string; features: string[]; category: string }> = {
@@ -84,13 +85,15 @@ export function ProjectModal({
 
   const extra = PROJECT_EXTENDED_INFO[project.title] || {
     category: project.category || "Full-Stack Web App",
-    longDescription: project.description,
-    features: [
-      "Clean architecture with modular code structure",
-      "Responsive layout optimized for mobile and desktop screens",
-      "Performance-tuned API endpoints and rendering",
-      "Secure data handling and state management",
-    ],
+    longDescription: project.longDescription || project.description,
+    features: (project.details && project.details.length > 0)
+      ? project.details
+      : project.features || [
+          "Clean architecture with modular code structure",
+          "Responsive layout optimized for mobile and desktop screens",
+          "Performance-tuned API endpoints and rendering",
+          "Secure data handling and state management",
+        ],
   }
 
   return (
