@@ -16,7 +16,13 @@ import { DevTerminal } from "@/components/dev-terminal"
 import { CommandPalette } from "@/components/command-palette"
 import { ProjectModal, ProjectDetail } from "@/components/project-modal"
 import { CostEstimator } from "@/components/cost-estimator"
-import { DEFAULT_SITE_CONFIG } from "@/lib/site-config"
+import {
+  DEFAULT_SITE_CONFIG,
+  DEFAULT_PROJECTS,
+  DEFAULT_SKILLS,
+  DEFAULT_SERVICES,
+  DEFAULT_REVIEWS,
+} from "@/lib/site-config"
 import {
   playClickSound,
   playHoverSound,
@@ -75,69 +81,8 @@ function TechBadge({ label }: { label: string }) {
 }
 
 // ================================================================
-// DEFAULT DATA
+// NAVIGATION & TECH TAGS
 // ================================================================
-const DEFAULT_SKILLS = [
-  { id:"1", category:"Frontend",         items:["React.js","Next.js 15","TypeScript","JavaScript","Tailwind CSS","Redux","HTML5/CSS3"], color:"#06b6d4", level:92 },
-  { id:"2", category:"Backend",          items:["Node.js","Express.js","REST APIs","JWT Authentication","WebSockets","Middleware"],      color:"#10b981", level:88 },
-  { id:"3", category:"Database & Cloud", items:["MongoDB","Mongoose","Firebase","PostgreSQL","Vercel","Railway","Render"],              color:"#f59e0b", level:85 },
-  { id:"4", category:"Design & Tools",   items:["Figma to Code","Git & GitHub","VS Code","Postman","Responsive UI","Glassmorphism"],      color:"#ec4899", level:90 },
-]
-
-const DEFAULT_SERVICES = [
-  { id:"1", title:"Full-Stack Web Development", description:"End-to-end web applications using the MERN stack with clean architecture, secure authentication, and modern UI/UX.",        points:["MERN Stack Web Apps","SSR & Next.js 15","State Management & Redux"], color:"#f59e0b" },
-  { id:"2", title:"API Development",            description:"Production-grade RESTful APIs with Express.js, JWT authentication, rate limiting, error handling, and documentation.",  points:["REST API Design","JWT & OAuth 2.0","Rate Limiting & Security"],     color:"#10b981" },
-  { id:"3", title:"UI/UX Development",          description:"Pixel-perfect, responsive interfaces converting Figma designs into high-performance React & Tailwind code.",              points:["Responsive Mobile-First","Figma to React Code","Micro-animations & 3D"], color:"#ec4899" },
-  { id:"4", title:"Deployment & Optimization",  description:"Seamless deployment on Vercel, Railway, and Render with CI/CD workflows, performance tuning, and SEO best practices.",   points:["Vercel / Railway / Render","Speed & Performance Tuning","SEO & Accessibility"], color:"#0ea5e9" },
-]
-
-const DEFAULT_PROJECTS: ProjectDetail[] = [
-  {
-    id: "1",
-    title: "ThinkBoard",
-    subtitle: "MERN Notes App",
-    category: "Full-Stack MERN",
-    description: "A modern collaborative note-taking and knowledge base app with markdown support, user authentication, and rate-limited APIs.",
-    tech: ["MongoDB", "Express.js", "React", "Node.js", "Tailwind CSS", "JWT"],
-    github: "https://github.com/mani78979/mern-thinkboard",
-    live: "https://mern-thinkboard-production-56fc.up.railway.app/",
-    accentColor: "#f59e0b",
-    details: ["JWT Authentication with refresh tokens", "Full markdown syntax parser", "Rate-limited Express.js REST APIs"],
-  },
-  {
-    id: "2",
-    title: "GeoSpatial Urbanization",
-    subtitle: "Flutter + AI Sprawl Analysis",
-    category: "Mobile & AI",
-    description: "Cross-platform mobile application analyzing urban growth and satellite imagery using TensorFlow Lite and GeoJSON mapping.",
-    tech: ["Flutter", "Dart", "Firebase", "TensorFlow Lite", "GIS Data"],
-    github: "https://github.com/mani78979/GeoSpatial-Analysis-for-Better-Urbanization-of-Faisalabad-City",
-    live: "",
-    accentColor: "#0ea5e9",
-    details: ["TensorFlow Lite offline machine learning model", "Interactive GeoJSON maps", "Firebase cloud synchronization"],
-  },
-  {
-    id: "3",
-    title: "Dev Portfolio",
-    subtitle: "Next.js 15 Portfolio",
-    category: "Next.js / Frontend",
-    description: "High-performance portfolio built with Next.js 15, TypeScript, Tailwind CSS, custom CLI terminal, and Web Audio synth sound effects.",
-    tech: ["Next.js 15", "TypeScript", "Tailwind CSS", "Web Audio API", "Mongoose"],
-    github: "https://github.com/musman079/my-portfolio",
-    live: "",
-    accentColor: "#10b981",
-    details: ["120 FPS hardware acceleration", "Web Audio API synthesizer", "MongoDB Admin CMS Dashboard"],
-  },
-]
-
-const DEFAULT_REVIEWS = [
-  { id:"1", name:"john_d***",  country:"🇺🇸 United States", rating:5, review:"Exceptional work! Usman built our full-stack web app ahead of schedule with very clean code. Great communication throughout.",   date:"2 weeks ago",  project:"MERN Stack Web App"      },
-  { id:"2", name:"sarah_m***", country:"🇬🇧 United Kingdom", rating:5, review:"Outstanding developer! Delivered exactly what we needed for our React dashboard. Professional attitude and top-quality code.",    date:"1 month ago",  project:"React Dashboard"          },
-  { id:"3", name:"ahmed_k***", country:"🇸🇦 Saudi Arabia", rating:5, review:"Very professional and talented. Fixed our Node.js app bugs quickly and improved performance significantly. 5 stars!",            date:"1 month ago",  project:"Node.js Bug Fix"          },
-  { id:"4", name:"lucas_b***", country:"🇩🇪 Germany",        rating:5, review:"Top-tier developer. Built our MongoDB API integration flawlessly with proper documentation. Will definitely hire again.",        date:"2 months ago", project:"MongoDB API Integration"  },
-  { id:"5", name:"priya_s***", country:"🇮🇳 India",          rating:5, review:"Excellent experience! Responsive, talented, and delivers quality work every time. Built our company website perfectly.",         date:"2 months ago", project:"Company Website"          },
-  { id:"6", name:"mike_r***",  country:"🇺🇸 United States", rating:5, review:"Usman is a rockstar developer. Understood requirements immediately and delivered a polished product. Best freelancer on Fiverr.", date:"3 months ago", project:"Full Stack E-commerce"     },
-]
 
 const TECH_STACK = [
   "React", "Next.js 15", "TypeScript", "Node.js", "Express.js", "MongoDB", "Tailwind CSS",
@@ -436,7 +381,8 @@ export default function Portfolio() {
     projectType: "Full-Stack MERN App",
     message: "",
   })
-  const [contactStatus, setContactStatus] = useState<"idle" | "sent">("idle")
+  const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "sent" | "error">("idle")
+  const [contactError, setContactError] = useState("")
 
   // Dynamic Data from MongoDB APIs
   const [dynProjects, setDynProjects] = useState<ProjectDetail[]>(DEFAULT_PROJECTS)
@@ -461,21 +407,29 @@ export default function Portfolio() {
     setIsMounted(true)
     setSoundActive(isSoundEnabled())
 
+    // Track initial page view in analytics
+    fetch("/api/analytics", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event: "pageView" }),
+    }).catch(() => {})
+
     // Fetch dynamic data from MongoDB APIs
     Promise.all([
-      fetch('/api/projects').then(r => r.json()).catch(() => DEFAULT_PROJECTS),
-      fetch('/api/reviews').then(r => r.json()).catch(() => DEFAULT_REVIEWS),
-      fetch('/api/skills').then(r => r.json()).catch(() => DEFAULT_SKILLS),
-      fetch('/api/services').then(r => r.json()).catch(() => DEFAULT_SERVICES),
-      fetch('/api/profile').then(r => r.json()).catch(() => DEFAULT_SITE_CONFIG)
+      fetch("/api/projects").then(r => r.json()).catch(() => null),
+      fetch("/api/reviews").then(r => r.json()).catch(() => null),
+      fetch("/api/skills").then(r => r.json()).catch(() => null),
+      fetch("/api/services").then(r => r.json()).catch(() => null),
+      fetch("/api/profile").then(r => r.json()).catch(() => null),
     ]).then(([projects, reviews, skills, services, profile]) => {
       if (Array.isArray(projects) && projects.length) setDynProjects(projects)
-      if (Array.isArray(reviews) && reviews.length) setDynReviews(reviews)
+      if (Array.isArray(reviews)) setDynReviews(reviews.length ? reviews : [])
       if (Array.isArray(skills) && skills.length) setDynSkills(skills)
       if (Array.isArray(services) && services.length) setDynServices(services)
       if (profile && profile.name) setDynProfile({ ...DEFAULT_SITE_CONFIG, ...profile })
     })
   }, [])
+
 
   // Typing animation
   const roles = dynProfile.typingRoles && dynProfile.typingRoles.length ? dynProfile.typingRoles : DEFAULT_SITE_CONFIG.typingRoles
@@ -589,15 +543,37 @@ export default function Portfolio() {
     setTimeout(() => setCopiedEmail(false), 2500)
   }
 
-  const handleContactSubmit = (e: React.FormEvent) => {
+  const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    playSuccessSound()
-    setContactStatus("sent")
-    setTimeout(() => {
-      setContactStatus("idle")
-      setContactForm({ name: "", email: "", projectType: "Full-Stack MERN App", message: "" })
-    }, 4000)
+    setContactStatus("loading")
+    setContactError("")
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contactForm),
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        playSuccessSound()
+        setContactStatus("sent")
+        setTimeout(() => {
+          setContactStatus("idle")
+          setContactForm({ name: "", email: "", projectType: "Full-Stack MERN App", message: "" })
+        }, 5000)
+      } else {
+        setContactStatus("error")
+        setContactError(data.error || "Failed to send message. Please try again.")
+      }
+    } catch (err) {
+      setContactStatus("error")
+      setContactError("Network error. Please try reaching out directly via WhatsApp.")
+    }
   }
+
 
   // Filter projects
   const filteredProjects = dynProjects.filter(p => {
@@ -814,7 +790,18 @@ export default function Portfolio() {
 
               <div className="flex flex-wrap gap-4 justify-center lg:justify-start mb-10 animate-fade-in"
                 style={{ animationDelay:".6s" }}>
-                <a href={dynProfile.resumeUrl || "https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing"} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={dynProfile.resumeUrl || "https://drive.google.com/file/d/1L8iT_FWQeu5zaE9CWjt7kEoik7iMzb51/view?usp=sharing"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    fetch("/api/analytics", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ event: "resumeDownload" }),
+                    }).catch(() => {})
+                  }}
+                >
                   <Button id="download-resume-btn" size="lg" className="gap-2 px-7 font-bold btn-primary-glow"
                     style={{ background:"linear-gradient(135deg,#f59e0b,#0ea5e9)", color:"#000", border:"none" }}>
                     <Download className="h-4 w-4" />Download Resume
@@ -825,6 +812,7 @@ export default function Portfolio() {
                   <Mail className="h-4 w-4" />Get In Touch
                 </Button>
               </div>
+
 
               {/* Social Channels */}
               <div className="flex items-center justify-center lg:justify-start gap-3 animate-fade-in" style={{ animationDelay:".75s" }}>
@@ -1236,6 +1224,11 @@ export default function Portfolio() {
             <CostEstimator
               rates={dynProfile.estimatorRates}
               onSelectQuote={details => {
+                fetch("/api/analytics", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ event: "estimatorCalculation" }),
+                }).catch(() => {})
                 setContactForm(prev => ({
                   ...prev,
                   message: `Hello Usman, I'd like to get started on this project:\n${details}`,
@@ -1245,6 +1238,7 @@ export default function Portfolio() {
               }}
             />
           </div>
+
         </div>
       </section>
 
@@ -1272,33 +1266,39 @@ export default function Portfolio() {
               <Button size="sm" className="gap-1.5 text-xs btn-fiverr">View Profile <ExternalLink className="h-3 w-3" /></Button>
             </a>
           </div>
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {dynReviews.map(({ name, country, rating, review, date, project }, i) => (
-              <SpotlightCard key={i} className="rounded-2xl p-6 reveal relative review-quote glass-card"
-                style={{ transitionDelay:`${i * 0.08}s` }}>
-                <div className="flex items-center justify-between mb-4 relative z-10">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                      style={{ background:"linear-gradient(135deg,rgba(245,158,11,0.15),rgba(14,165,233,0.15))", border:"1px solid rgba(245,158,11,0.28)", color:"#f59e0b" }}>
-                      {name?.[0]?.toUpperCase()}
+          {dynReviews.length === 0 ? (
+            <div className="text-center py-12 px-6 rounded-2xl glass-card border border-border border-dashed max-w-md mx-auto reveal">
+              <p className="text-sm font-medium text-muted-foreground">New client reviews are coming soon! Check back later or view live feedback on Fiverr.</p>
+            </div>
+          ) : (
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {dynReviews.map(({ name, country, rating, review, date, project }, i) => (
+                <SpotlightCard key={i} className="rounded-2xl p-6 reveal relative review-quote glass-card"
+                  style={{ transitionDelay:`${i * 0.08}s` }}>
+                  <div className="flex items-center justify-between mb-4 relative z-10">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                        style={{ background:"linear-gradient(135deg,rgba(245,158,11,0.15),rgba(14,165,233,0.15))", border:"1px solid rgba(245,158,11,0.28)", color:"#f59e0b" }}>
+                        {name?.[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="font-medium text-sm text-foreground">{name}</div>
+                        <div className="text-xs text-muted-foreground">{country}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-medium text-sm text-foreground">{name}</div>
-                      <div className="text-xs text-muted-foreground">{country}</div>
+                    <div className="flex gap-0.5">
+                      {Array.from({ length:rating }).map((_,j) => <Star key={j} className="h-4 w-4 fill-yellow-400 star-gold" />)}
                     </div>
                   </div>
-                  <div className="flex gap-0.5">
-                    {Array.from({ length:rating }).map((_,j) => <Star key={j} className="h-4 w-4 fill-yellow-400 star-gold" />)}
+                  <p className="text-foreground/90 text-sm leading-relaxed mb-4 relative z-10">&quot;{review}&quot;</p>
+                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 relative z-10 border-t border-border">
+                    <span className="font-mono opacity-80 text-amber-500 font-semibold">{project}</span>
+                    <span>{date}</span>
                   </div>
-                </div>
-                <p className="text-foreground/90 text-sm leading-relaxed mb-4 relative z-10">&quot;{review}&quot;</p>
-                <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 relative z-10 border-t border-border">
-                  <span className="font-mono opacity-80 text-amber-500 font-semibold">{project}</span>
-                  <span>{date}</span>
-                </div>
-              </SpotlightCard>
-            ))}
-          </div>
+                </SpotlightCard>
+              ))}
+            </div>
+          )}
           <div className="text-center mt-10 reveal">
             <a href={dynProfile.fiverrUrl || "https://www.fiverr.com/musman079"} target="_blank" rel="noopener noreferrer">
               <Button size="lg" className="gap-2 px-8 btn-fiverr">See All Reviews on Fiverr <ExternalLink className="h-4 w-4" /></Button>
@@ -1457,23 +1457,43 @@ export default function Portfolio() {
                   />
                 </div>
 
+                {contactError && (
+                  <div className="p-3.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-500 text-sm flex items-center gap-2 font-medium">
+                    <span className="font-bold">Error:</span> {contactError}
+                  </div>
+                )}
+
                 {contactStatus === "sent" ? (
                   <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-2 font-medium">
-                    <CheckCircle2 className="w-4 h-4" /> Message sent successfully! Usman will reply within 24 hours.
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                    <span>Message received successfully! Usman will reply within 24 hours.</span>
                   </div>
                 ) : (
                   <Button
                     type="submit"
+                    disabled={contactStatus === "loading"}
                     className="w-full gap-2 text-xs font-bold py-5 btn-primary-glow"
                     style={{
                       background: "linear-gradient(135deg,#f59e0b,#0ea5e9)",
                       color: "#000",
                       border: "none",
+                      opacity: contactStatus === "loading" ? 0.7 : 1,
                     }}
                   >
-                    <Send className="w-4 h-4" /> Send Direct Message
+                    {contactStatus === "loading" ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                        <span>Sending Message...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Send Direct Message</span>
+                      </>
+                    )}
                   </Button>
                 )}
+
               </form>
             </div>
           </div>

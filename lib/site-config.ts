@@ -87,3 +87,66 @@ export const DEFAULT_SITE_CONFIG = {
   footerBio: "Full-Stack MERN Developer • Available for Global Freelance Work",
   copyrightText: "Muhammad Usman. Built with Next.js 15 & Tailwind CSS.",
 };
+
+export const DEFAULT_SKILLS = [
+  { id:"1", category:"Frontend",         items:["React.js","Next.js 15","TypeScript","JavaScript","Tailwind CSS","Redux","HTML5/CSS3"], color:"#06b6d4", level:92 },
+  { id:"2", category:"Backend",          items:["Node.js","Express.js","REST APIs","JWT Authentication","WebSockets","Middleware"],      color:"#10b981", level:88 },
+  { id:"3", category:"Database & Cloud", items:["MongoDB","Mongoose","Firebase","PostgreSQL","Vercel","Railway","Render"],              color:"#f59e0b", level:85 },
+  { id:"4", category:"Design & Tools",   items:["Figma to Code","Git & GitHub","VS Code","Postman","Responsive UI","Glassmorphism"],      color:"#ec4899", level:90 },
+];
+
+export const DEFAULT_SERVICES = [
+  { id:"1", title:"Full-Stack Web Development", description:"End-to-end web applications using the MERN stack with clean architecture, secure authentication, and modern UI/UX.",        points:["MERN Stack Web Apps","SSR & Next.js 15","State Management & Redux"], color:"#f59e0b" },
+  { id:"2", title:"API Development",            description:"Production-grade RESTful APIs with Express.js, JWT authentication, rate limiting, error handling, and documentation.",  points:["REST API Design","JWT & OAuth 2.0","Rate Limiting & Security"],     color:"#10b981" },
+  { id:"3", title:"UI/UX Development",          description:"Pixel-perfect, responsive interfaces converting Figma designs into high-performance React & Tailwind code.",              points:["Responsive Mobile-First","Figma to React Code","Micro-animations & 3D"], color:"#ec4899" },
+  { id:"4", title:"Deployment & Optimization",  description:"Seamless deployment on Vercel, Railway, and Render with CI/CD workflows, performance tuning, and SEO best practices.",   points:["Vercel / Railway / Render","Speed & Performance Tuning","SEO & Accessibility"], color:"#0ea5e9" },
+];
+
+export const DEFAULT_PROJECTS = [
+  {
+    id: "1",
+    title: "ThinkBoard",
+    subtitle: "MERN Notes App",
+    category: "Full-Stack MERN",
+    description: "A modern collaborative note-taking and knowledge base app with markdown support, user authentication, and rate-limited APIs.",
+    tech: ["MongoDB", "Express.js", "React", "Node.js", "Tailwind CSS", "JWT"],
+    github: "https://github.com/mani78979/mern-thinkboard",
+    live: "https://mern-thinkboard-production-56fc.up.railway.app/",
+    accentColor: "#f59e0b",
+    details: ["JWT Authentication with refresh tokens", "Full markdown syntax parser", "Rate-limited Express.js REST APIs"],
+  },
+  {
+    id: "2",
+    title: "GeoSpatial Urbanization",
+    subtitle: "Flutter + AI Sprawl Analysis",
+    category: "Mobile & AI",
+    description: "Cross-platform mobile application analyzing urban growth and satellite imagery using TensorFlow Lite and GeoJSON mapping.",
+    tech: ["Flutter", "Dart", "Firebase", "TensorFlow Lite", "GIS Data"],
+    github: "https://github.com/mani78979/GeoSpatial-Analysis-for-Better-Urbanization-of-Faisalabad-City",
+    live: "",
+    accentColor: "#0ea5e9",
+    details: ["TensorFlow Lite offline machine learning model", "Interactive GeoJSON maps", "Firebase cloud synchronization"],
+  },
+  {
+    id: "3",
+    title: "Dev Portfolio",
+    subtitle: "Next.js 15 Portfolio",
+    category: "Next.js / Frontend",
+    description: "High-performance portfolio built with Next.js 15, TypeScript, Tailwind CSS, custom CLI terminal, and Web Audio synth sound effects.",
+    tech: ["Next.js 15", "TypeScript", "Tailwind CSS", "Web Audio API", "Mongoose"],
+    github: "https://github.com/musman079/my-portfolio",
+    live: "",
+    accentColor: "#10b981",
+    details: ["120 FPS hardware acceleration", "Web Audio API synthesizer", "MongoDB Admin CMS Dashboard"],
+  },
+];
+
+export const DEFAULT_REVIEWS = [
+  { id:"1", name:"john_d***",  country:"🇺🇸 United States", rating:5, review:"Exceptional work! Usman built our full-stack web app ahead of schedule with very clean code. Great communication throughout.",   date:"2 weeks ago",  project:"MERN Stack Web App"      },
+  { id:"2", name:"sarah_m***", country:"🇬🇧 United Kingdom", rating:5, review:"Outstanding developer! Delivered exactly what we needed for our React dashboard. Professional attitude and top-quality code.",    date:"1 month ago",  project:"React Dashboard"          },
+  { id:"3", name:"ahmed_k***", country:"🇸🇦 Saudi Arabia", rating:5, review:"Very professional and talented. Fixed our Node.js app bugs quickly and improved performance significantly. 5 stars!",            date:"1 month ago",  project:"Node.js Bug Fix"          },
+  { id:"4", name:"lucas_b***", country:"🇩🇪 Germany",        rating:5, review:"Top-tier developer. Built our MongoDB API integration flawlessly with proper documentation. Will definitely hire again.",        date:"2 months ago", project:"MongoDB API Integration"  },
+  { id:"5", name:"priya_s***", country:"🇮🇳 India",          rating:5, review:"Excellent experience! Responsive, talented, and delivers quality work every time. Built our company website perfectly.",         date:"2 months ago", project:"Company Website"          },
+  { id:"6", name:"mike_r***",  country:"🇺🇸 United States", rating:5, review:"Usman is a rockstar developer. Understood requirements immediately and delivered a polished product. Best freelancer on Fiverr.", date:"3 months ago", project:"Full Stack E-commerce"     },
+];
+
