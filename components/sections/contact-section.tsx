@@ -42,8 +42,8 @@ interface ContactSectionProps {
 
 export function ContactSection({
   email = "usmankousar772@gmail.com",
-  whatsapp = "+92 328 6596772",
-  whatsappUrl = "https://wa.me/923286596772",
+  whatsapp = "+92 318 9053287",
+  whatsappUrl = "https://wa.me/923189053287",
   fiverrUrl = "https://www.fiverr.com/musman079",
   contactForm,
   setContactForm,

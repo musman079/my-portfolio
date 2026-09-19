@@ -852,7 +852,7 @@ export default function AdminPage() {
                               <Mail className="w-3.5 h-3.5" /> Reply via Email
                             </a>
                             <a
-                              href={`https://wa.me/923286596772?text=Hello%20${encodeURIComponent(item.name)},%20thank%20you%20for%20your%20inquiry%20regarding%20${encodeURIComponent(item.projectType)}.`}
+                              href={`https://wa.me/923189053287?text=Hello%20${encodeURIComponent(item.name)},%20thank%20you%20for%20your%20inquiry%20regarding%20${encodeURIComponent(item.projectType)}.`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 flex items-center gap-1.5 transition-colors"

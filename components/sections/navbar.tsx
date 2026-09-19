@@ -64,9 +64,9 @@ export function Navbar({
         }`}
         style={navScrolled ? { borderColor: "rgba(245,158,11,0.18)" } : {}}
       >
-        <a href="/" onClick={() => playClickSound()}>
+        <a href="/" onClick={() => playClickSound()} className="shrink-0 flex items-center">
           <span
-            className="text-xl font-bold tracking-tight gradient-text-animated glitch-text font-mono"
+            className="text-xl font-bold tracking-tight gradient-text-animated glitch-text font-mono whitespace-nowrap inline-block"
             data-text="<M.Usman />"
           >
             {"<M.Usman />"}
@@ -74,7 +74,7 @@ export function Navbar({
         </a>
 
         {/* Desktop Links */}
-        <div className="hidden lg:flex items-center gap-6">
+        <div className="hidden lg:flex items-center gap-3.5 xl:gap-6">
           {NAV_LINKS.map(({ label, id }) => (
             <button
               key={id}

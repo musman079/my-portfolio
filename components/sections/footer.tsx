@@ -24,7 +24,7 @@ export function Footer({
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <span
-              className="text-xl font-bold gradient-text-animated glitch-text font-mono"
+              className="text-xl font-bold gradient-text-animated glitch-text font-mono whitespace-nowrap inline-block"
               data-text="<M.Usman />"
             >
               {"<M.Usman />"}

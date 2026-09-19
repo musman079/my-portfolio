@@ -166,7 +166,7 @@ Available Commands:
         newLines.push({
           id: (Date.now() + 1).toString(),
           type: "success",
-          text: "📧 Email: usmankousar772@gmail.com\n💬 WhatsApp: +92 328 6596772\n💼 LinkedIn: linkedin.com/in/musman78\n⭐ Fiverr: fiverr.com/musman079",
+          text: "📧 Email: usmankousar772@gmail.com\n💬 WhatsApp: +92 318 9053287\n💼 LinkedIn: linkedin.com/in/musman78\n⭐ Fiverr: fiverr.com/musman079",
         })
         break
 

@@ -24,8 +24,8 @@ const ProfileSchema = new Schema({
 
   // Social & Contact details
   email: { type: String, default: "usmankousar772@gmail.com" },
-  whatsapp: { type: String, default: "+92 328 6596772" },
-  whatsappUrl: { type: String, default: "https://wa.me/923286596772" },
+  whatsapp: { type: String, default: "+92 318 9053287" },
+  whatsappUrl: { type: String, default: "https://wa.me/923189053287" },
   github: { type: String, default: "https://github.com/mani78979" },
   linkedin: { type: String, default: "http://www.linkedin.com/in/musman78" },
   fiverrUrl: { type: String, default: "https://www.fiverr.com/musman079" },

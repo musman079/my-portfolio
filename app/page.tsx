@@ -317,7 +317,7 @@ export default function Portfolio() {
       {/* ====== FLOATING WHATSAPP CHAT WIDGET ====== */}
       {isMounted && (
         <WhatsAppWidget
-          phoneNumber={dynProfile.whatsapp || "923286596772"}
+          phoneNumber={dynProfile.whatsapp || "923189053287"}
           defaultMessage="Hi Usman! I saw your portfolio and would like to discuss a project."
         />
       )}
