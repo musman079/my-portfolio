@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
+import { requireAdminAuth } from "@/lib/auth";
 import { Project } from "@/models/Project";
 import { Skill } from "@/models/Skill";
 import { Service } from "@/models/Service";
@@ -15,6 +16,13 @@ import {
 
 export async function POST(req: Request) {
   try {
+    if (!requireAdminAuth(req)) {
+      return NextResponse.json(
+        { error: "Unauthorized. Admin authentication required to seed or reset database." },
+        { status: 401 }
+      );
+    }
+
     await connectToDatabase();
     const body = await req.json().catch(() => ({}));
     const action = body.action || "seed";

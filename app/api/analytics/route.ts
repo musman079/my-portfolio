@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
+import { requireAdminAuth } from "@/lib/auth";
 import { Analytics } from "@/models/Analytics";
 import { Inquiry } from "@/models/Inquiry";
 import { Project } from "@/models/Project";
@@ -39,7 +40,11 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
+  if (!requireAdminAuth(req)) {
+    return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
+  }
+
   try {
     await connectToDatabase();
     let stats = await Analytics.findOne({ key: "global_stats" }).lean();

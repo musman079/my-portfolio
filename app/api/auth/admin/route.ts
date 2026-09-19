@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+import { signAdminToken, requireAdminAuth } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { password } = body;
 
     const expectedPassword = process.env.ADMIN_PASSWORD || "admin123";
@@ -15,24 +16,18 @@ export async function POST(req: Request) {
     }
 
     if (password === expectedPassword) {
-      // In a serverless setup, return authorized token and status
-      const authPayload = {
-        authenticated: true,
-        user: "Admin",
-        timestamp: Date.now(),
-        // Simple hash token for client session check
-        token: Buffer.from(`admin_${Date.now()}_auth`).toString("base64"),
-      };
+      const token = signAdminToken();
 
       const response = NextResponse.json({
         success: true,
         message: "Authentication successful",
-        ...authPayload,
+        token,
+        user: "Admin",
       });
 
-      // Set session cookie
-      response.cookies.set("admin_session", authPayload.token, {
-        httpOnly: false,
+      // Set secure session cookie
+      response.cookies.set("admin_session", token, {
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         maxAge: 60 * 60 * 24 * 7, // 7 days
@@ -56,10 +51,25 @@ export async function POST(req: Request) {
 }
 
 export async function GET(req: Request) {
-  const cookie = req.headers.get("cookie") || "";
-  const hasSession = cookie.includes("admin_session=");
-
+  const isAuth = requireAdminAuth(req);
   return NextResponse.json({
-    authenticated: hasSession,
+    authenticated: isAuth,
   });
+}
+
+export async function DELETE() {
+  const response = NextResponse.json({
+    success: true,
+    message: "Logged out successfully",
+  });
+
+  response.cookies.set("admin_session", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 0,
+    path: "/",
+  });
+
+  return response;
 }

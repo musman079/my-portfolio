@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
+import { requireAdminAuth } from "@/lib/auth";
 import { Project } from "@/models/Project";
 
 export async function GET() {
@@ -15,6 +16,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  if (!requireAdminAuth(req)) {
+    return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
+  }
+
   try {
     await connectToDatabase();
     const data = await req.json();
@@ -26,6 +31,10 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
+  if (!requireAdminAuth(req)) {
+    return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
+  }
+
   try {
     await connectToDatabase();
     const url = new URL(req.url);
@@ -35,6 +44,7 @@ export async function PUT(req: Request) {
     if (!id) return NextResponse.json({ error: "ID required" }, { status: 400 });
 
     const updated = await Project.findByIdAndUpdate(id, data, { new: true });
+    if (!updated) return NextResponse.json({ error: "Project not found" }, { status: 404 });
     return NextResponse.json({ ...updated.toObject(), id: updated._id.toString() });
   } catch (error) {
     return NextResponse.json({ error: "Failed to update project" }, { status: 500 });
@@ -42,6 +52,10 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
+  if (!requireAdminAuth(req)) {
+    return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
+  }
+
   try {
     await connectToDatabase();
     const url = new URL(req.url);

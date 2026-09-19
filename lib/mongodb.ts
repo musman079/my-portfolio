@@ -6,11 +6,9 @@ try {
   dns.setServers(["8.8.8.8", "1.1.1.1"]);
 } catch (_) { }
 
-const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || process.env.MONGODB_URL;
+const getMongoUri = () =>
+  process.env.MONGODB_URI || process.env.DATABASE_URL || process.env.MONGODB_URL;
 
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI, DATABASE_URL, or MONGODB_URL environment variable inside .env.local");
-}
 
 
 let cached = (global as any).mongoose;
@@ -24,15 +22,20 @@ async function connectToDatabase() {
     return cached.conn;
   }
 
-  if (!cached.promise) {
+    const uri = getMongoUri();
+    if (!uri) {
+      throw new Error(
+        "Please define MONGODB_URI, DATABASE_URL, or MONGODB_URL in your environment."
+      );
+    }
+
     const opts = {
       bufferCommands: false,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
       return mongoose;
     });
-  }
 
   try {
     cached.conn = await cached.promise;

@@ -134,6 +134,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
 
       if (res.ok && data.success) {
         sessionStorage.setItem("admin_auth", "1")
+        if (data.token) sessionStorage.setItem("admin_token", data.token)
         onLogin()
       } else {
         setError(data.error || "Incorrect master password! Check .env.local")
@@ -207,6 +208,23 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   )
 }
 
+// Helper for authenticated API calls
+const adminFetch = (url: string, options: RequestInit = {}) => {
+  const token = typeof window !== "undefined" ? sessionStorage.getItem("admin_token") : null;
+  const headers = new Headers(options.headers || {});
+  if (token && !headers.has("Authorization")) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  if (!headers.has("Content-Type") && options.body && typeof options.body === "string") {
+    headers.set("Content-Type", "application/json");
+  }
+  return fetch(url, {
+    credentials: "include",
+    ...options,
+    headers,
+  });
+};
+
 // ================================================================
 // MAIN VIP ADMIN DASHBOARD
 // ================================================================
@@ -259,13 +277,13 @@ export default function AdminPage() {
   const loadAllData = async () => {
     try {
       const [settData, projData, revData, skillData, svcData, inqData, anaData] = await Promise.all([
-        fetch("/api/profile").then(r => r.json()).catch(() => null),
-        fetch("/api/projects").then(r => r.json()).catch(() => null),
-        fetch("/api/reviews").then(r => r.json()).catch(() => null),
-        fetch("/api/skills").then(r => r.json()).catch(() => null),
-        fetch("/api/services").then(r => r.json()).catch(() => null),
-        fetch("/api/contact").then(r => r.json()).catch(() => null),
-        fetch("/api/analytics").then(r => r.json()).catch(() => null),
+        adminFetch("/api/profile").then(r => r.json()).catch(() => null),
+        adminFetch("/api/projects").then(r => r.json()).catch(() => null),
+        adminFetch("/api/reviews").then(r => r.json()).catch(() => null),
+        adminFetch("/api/skills").then(r => r.json()).catch(() => null),
+        adminFetch("/api/services").then(r => r.json()).catch(() => null),
+        adminFetch("/api/contact").then(r => r.json()).catch(() => null),
+        adminFetch("/api/analytics").then(r => r.json()).catch(() => null),
       ])
       if (settData) setSettings(settData)
       if (Array.isArray(projData)) setProjects(projData)
@@ -288,9 +306,8 @@ export default function AdminPage() {
   const handleSeedDefaults = async (action: string = "seed") => {
     setSaving(true)
     try {
-      const res = await fetch("/api/seed", {
+      const res = await adminFetch("/api/seed", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action }),
       })
       const data = await res.json()
@@ -312,8 +329,12 @@ export default function AdminPage() {
     loadAllData()
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/admin", { method: "DELETE" })
+    } catch (_) {}
     sessionStorage.removeItem("admin_auth")
+    sessionStorage.removeItem("admin_token")
     setIsLoggedIn(false)
   }
 
@@ -323,9 +344,8 @@ export default function AdminPage() {
     if (!toSave) return
     setSaving(true)
     try {
-      const res = await fetch("/api/profile", {
+      const res = await adminFetch("/api/profile", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(toSave),
       })
       const updated = await res.json()
@@ -359,9 +379,8 @@ export default function AdminPage() {
   // ============================================================ INQUIRIES CRUD
   const handleUpdateInquiryStatus = async (id: string, newStatus: "unread" | "read" | "replied" | "archived") => {
     try {
-      const res = await fetch("/api/contact", {
+      const res = await adminFetch("/api/contact", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: newStatus }),
       })
       if (res.ok) {
@@ -379,7 +398,7 @@ export default function AdminPage() {
   const handleDeleteInquiry = async (id: string) => {
     if (!confirm("Are you sure you want to permanently delete this client inquiry?")) return
     try {
-      const res = await fetch(`/api/contact?id=${id}`, { method: "DELETE" })
+      const res = await adminFetch(`/api/contact?id=${id}`, { method: "DELETE" })
       if (res.ok) {
         setInquiries(prev => prev.filter(item => item._id !== id))
         if (selectedInquiry?._id === id) setSelectedInquiry(null)
@@ -409,12 +428,12 @@ export default function AdminPage() {
     const payload = { ...projectForm, tech: techArr, details: detailsArr }
 
     if (projectModal.item) {
-      const res = await fetch(`/api/projects?id=${projectModal.item.id}`, { method: "PUT", body: JSON.stringify(payload) })
+      const res = await adminFetch(`/api/projects?id=${projectModal.item.id}`, { method: "PUT", body: JSON.stringify(payload) })
       const updated = await res.json()
       setProjects(projects.map(p => p.id === updated.id ? updated : p))
       notify("Project updated successfully! 🚀")
     } else {
-      const res = await fetch("/api/projects", { method: "POST", body: JSON.stringify(payload) })
+      const res = await adminFetch("/api/projects", { method: "POST", body: JSON.stringify(payload) })
       const created = await res.json()
       setProjects([...projects, created])
       notify("New project added to portfolio! 🚀")
@@ -423,7 +442,7 @@ export default function AdminPage() {
   }
   const handleDeleteProject = async (id: string) => {
     if (!confirm("Are you sure you want to delete this project?")) return
-    await fetch(`/api/projects?id=${id}`, { method: "DELETE" })
+    await adminFetch(`/api/projects?id=${id}`, { method: "DELETE" })
     setProjects(projects.filter(p => p.id !== id))
     notify("Project deleted.")
   }
@@ -439,12 +458,12 @@ export default function AdminPage() {
   }
   const handleSaveReview = async () => {
     if (reviewModal.item) {
-      const res = await fetch(`/api/reviews?id=${reviewModal.item.id}`, { method: "PUT", body: JSON.stringify(reviewForm) })
+      const res = await adminFetch(`/api/reviews?id=${reviewModal.item.id}`, { method: "PUT", body: JSON.stringify(reviewForm) })
       const updated = await res.json()
       setReviews(reviews.map(r => r.id === updated.id ? updated : r))
       notify("Review updated! ⭐")
     } else {
-      const res = await fetch("/api/reviews", { method: "POST", body: JSON.stringify(reviewForm) })
+      const res = await adminFetch("/api/reviews", { method: "POST", body: JSON.stringify(reviewForm) })
       const created = await res.json()
       setReviews([...reviews, created])
       notify("Review added! ⭐")
@@ -453,7 +472,7 @@ export default function AdminPage() {
   }
   const handleDeleteReview = async (id: string) => {
     if (!confirm("Delete this review?")) return
-    await fetch(`/api/reviews?id=${id}`, { method: "DELETE" })
+    await adminFetch(`/api/reviews?id=${id}`, { method: "DELETE" })
     setReviews(reviews.filter(r => r.id !== id))
     notify("Review removed.")
   }
@@ -473,12 +492,12 @@ export default function AdminPage() {
     const items = skillItemsInput.split(",").map(t => t.trim()).filter(Boolean)
     const payload = { ...skillForm, items }
     if (skillModal.item) {
-      const res = await fetch(`/api/skills?id=${skillModal.item.id}`, { method: "PUT", body: JSON.stringify(payload) })
+      const res = await adminFetch(`/api/skills?id=${skillModal.item.id}`, { method: "PUT", body: JSON.stringify(payload) })
       const updated = await res.json()
       setSkills(skills.map(s => s.id === updated.id ? updated : s))
       notify("Skill category updated! ⚡")
     } else {
-      const res = await fetch("/api/skills", { method: "POST", body: JSON.stringify(payload) })
+      const res = await adminFetch("/api/skills", { method: "POST", body: JSON.stringify(payload) })
       const created = await res.json()
       setSkills([...skills, created])
       notify("New skill category added! ⚡")
@@ -487,7 +506,7 @@ export default function AdminPage() {
   }
   const handleDeleteSkill = async (id: string) => {
     if (!confirm("Delete this skill category?")) return
-    await fetch(`/api/skills?id=${id}`, { method: "DELETE" })
+    await adminFetch(`/api/skills?id=${id}`, { method: "DELETE" })
     setSkills(skills.filter(s => s.id !== id))
     notify("Skill category removed.")
   }
@@ -507,12 +526,12 @@ export default function AdminPage() {
     const points = servicePointsInput.split(",").map(p => p.trim()).filter(Boolean)
     const payload = { ...serviceForm, points }
     if (serviceModal.item) {
-      const res = await fetch(`/api/services?id=${serviceModal.item.id}`, { method: "PUT", body: JSON.stringify(payload) })
+      const res = await adminFetch(`/api/services?id=${serviceModal.item.id}`, { method: "PUT", body: JSON.stringify(payload) })
       const updated = await res.json()
       setServices(services.map(s => s.id === updated.id ? updated : s))
       notify("Service updated! 💼")
     } else {
-      const res = await fetch("/api/services", { method: "POST", body: JSON.stringify(payload) })
+      const res = await adminFetch("/api/services", { method: "POST", body: JSON.stringify(payload) })
       const created = await res.json()
       setServices([...services, created])
       notify("Service added! 💼")
@@ -521,7 +540,7 @@ export default function AdminPage() {
   }
   const handleDeleteService = async (id: string) => {
     if (!confirm("Delete this service?")) return
-    await fetch(`/api/services?id=${id}`, { method: "DELETE" })
+    await adminFetch(`/api/services?id=${id}`, { method: "DELETE" })
     setServices(services.filter(s => s.id !== id))
     notify("Service removed.")
   }

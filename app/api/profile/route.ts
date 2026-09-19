@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
+import { requireAdminAuth } from "@/lib/auth";
 import { Profile } from "@/models/Profile";
 import { DEFAULT_SITE_CONFIG } from "@/lib/site-config";
 
@@ -17,6 +18,10 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
+  if (!requireAdminAuth(req)) {
+    return NextResponse.json({ error: "Unauthorized. Admin session required." }, { status: 401 });
+  }
+
   try {
     await connectToDatabase();
     const data = await req.json();
