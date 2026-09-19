@@ -50,7 +50,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
             return (
               <TiltCard
                 key={svc.id}
-                className="glass-card rounded-2xl p-8 reveal group"
+                className="glass-card rounded-2xl p-8 group"
                 style={{ transitionDelay: `${i * 0.08}s` }}
               >
                 <div

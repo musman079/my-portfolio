@@ -59,7 +59,7 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
             return (
               <SpotlightCard
                 key={sk.id}
-                className="rounded-2xl p-6 reveal glass-card"
+                className="rounded-2xl p-6 glass-card"
                 style={{ transitionDelay: `${i * 0.08}s` }}
               >
                 <div

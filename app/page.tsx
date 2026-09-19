@@ -216,13 +216,16 @@ export default function Portfolio() {
     const t = setTimeout(() => {
       document
         .querySelectorAll(".reveal,.reveal-left,.reveal-right")
-        .forEach((el) => obs.observe(el));
-    }, 100);
+        .forEach((el) => {
+          obs.observe(el);
+          el.classList.add("revealed");
+        });
+    }, 50);
     return () => {
       clearTimeout(t);
       obs.disconnect();
     };
-  }, []);
+  }, [dynProjects, dynSkills, dynServices, dynReviews]);
 
   const scrollTo = (id: string) => {
     playClickSound();

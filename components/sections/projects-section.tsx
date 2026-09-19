@@ -119,7 +119,7 @@ export function ProjectsSection({
             return (
               <SpotlightCard
                 key={proj.id}
-                className="rounded-2xl overflow-hidden reveal group flex flex-col justify-between glass-card cursor-pointer"
+                className="rounded-2xl overflow-hidden group flex flex-col justify-between glass-card cursor-pointer"
                 style={{ transitionDelay: `${i * 0.08}s` }}
                 onClick={() => {
                   playClickSound();

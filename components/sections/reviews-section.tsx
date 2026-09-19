@@ -91,7 +91,7 @@ export function ReviewsSection({
               ({ name, country, rating, review, date, project }, i) => (
                 <SpotlightCard
                   key={i}
-                  className="rounded-2xl p-6 reveal relative review-quote glass-card"
+                  className="rounded-2xl p-6 relative review-quote glass-card"
                   style={{ transitionDelay: `${i * 0.08}s` }}
                 >
                   <div className="flex items-center justify-between mb-4 relative z-10">

@@ -117,13 +117,11 @@
 .glitch-text:hover::before { opacity:.8; transform:translate3d(-2px,0,0); }
 .glitch-text:hover::after  { opacity:.8; transform:translate3d(2px,0,0); }
 
-/* ============================================================ SCROLL REVEAL (Zero Jank) */
-.reveal       { opacity:0; transform:translate3d(0,16px,0); transition:opacity .4s ease-out, transform .4s ease-out; will-change:opacity,transform; }
-.reveal.revealed { opacity:1; transform:translate3d(0,0,0); }
-.reveal-left  { opacity:0; transform:translate3d(-20px,0,0); transition:opacity .4s ease-out, transform .4s ease-out; will-change:opacity,transform; }
-.reveal-left.revealed { opacity:1; transform:translate3d(0,0,0); }
-.reveal-right { opacity:0; transform:translate3d(20px,0,0); transition:opacity .4s ease-out, transform .4s ease-out; will-change:opacity,transform; }
-.reveal-right.revealed { opacity:1; transform:translate3d(0,0,0); }
+/* ============================================================ SCROLL REVEAL (Zero Jank & Safe Fallback) */
+.reveal       { opacity:1; transform:translate3d(0,0,0); transition:opacity .5s ease-out, transform .5s ease-out; }
+.reveal-left  { opacity:1; transform:translate3d(0,0,0); transition:opacity .5s ease-out, transform .5s ease-out; }
+.reveal-right { opacity:1; transform:translate3d(0,0,0); transition:opacity .5s ease-out, transform .5s ease-out; }
+
 
 /* ============================================================ GLASS & THEME CARDS */
 .glass {
@@ -237,7 +235,7 @@
 /* ============================================================ SKILL BAR */
 .skill-bar { height:5px; border-radius:3px; background:rgba(255,255,255,.08); overflow:hidden; margin:8px 0 14px; }
 .light .skill-bar { background: rgba(0,0,0,0.07); }
-.skill-bar-fill { height:100%; border-radius:3px; transform:scaleX(0); transform-origin:left; transition:transform 1s cubic-bezier(.22,1,.36,1); }
+.skill-bar-fill { height:100%; border-radius:3px; transform:scaleX(1); transform-origin:left; transition:transform 1s cubic-bezier(.22,1,.36,1); }
 .revealed .skill-bar-fill { transform:scaleX(1); }
 
 /* ============================================================ CODE WINDOW */
