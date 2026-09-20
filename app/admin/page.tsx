@@ -200,9 +200,6 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
             )}
           </button>
         </form>
-        <p className="text-center text-xs mt-4 text-muted-foreground font-mono">
-          Configured in <code className="text-amber-400">.env.local</code> (default: <code className="text-amber-400">admin123</code>)
-        </p>
       </div>
     </div>
   )

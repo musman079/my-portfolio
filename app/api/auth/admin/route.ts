@@ -6,7 +6,7 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const { password } = body;
 
-    const expectedPassword = process.env.ADMIN_PASSWORD || "admin123";
+    const expectedPassword = process.env.ADMIN_PASSWORD || "Usman123@@@";
 
     if (!password) {
       return NextResponse.json(
