@@ -30,7 +30,13 @@ import { ContactSection } from "@/components/sections/contact-section";
 import { Footer } from "@/components/sections/footer";
 import type { ProjectDetail } from "@/components/project-modal";
 
+import { GlowCursor } from "@/components/motion-primitives";
+
 // Lazy-loaded heavy tools & modals (SSR: false for optimal performance)
+const Hero3DScene = dynamic(
+  () => import("@/components/hero-3d-scene").then((m) => m.Hero3DScene),
+  { ssr: false }
+);
 const DevTerminal = dynamic(
   () => import("@/components/dev-terminal").then((m) => m.DevTerminal),
   { ssr: false }
@@ -45,13 +51,6 @@ const ProjectModal = dynamic(
 );
 const CostEstimator = dynamic(
   () => import("@/components/cost-estimator").then((m) => m.CostEstimator),
-  { ssr: false }
-);
-const ConstellationCanvas = dynamic(
-  () =>
-    import("@/components/constellation-canvas").then(
-      (m) => m.ConstellationCanvas
-    ),
   { ssr: false }
 );
 const WhatsAppWidget = dynamic(
@@ -365,7 +364,7 @@ export default function Portfolio() {
         typingText={typingText}
         onScrollTo={scrollTo}
         onOpenTerminal={() => setTerminalOpen(true)}
-        canvasElement={isMounted ? <ConstellationCanvas /> : null}
+        scene3D={isMounted ? <Hero3DScene /> : null}
       />
 
       {/* ====== ABOUT & STATS & TECH MARQUEE ====== */}

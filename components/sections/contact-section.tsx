@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Mail,
@@ -13,6 +14,12 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { playSuccessSound } from "@/lib/sound-effects";
+import {
+  ScrollReveal,
+  StaggerContainer,
+  staggerItem,
+  MagneticButton,
+} from "@/components/motion-primitives";
 
 interface ContactSectionProps {
   email?: string;
@@ -65,23 +72,27 @@ export function ContactSection({
       <span className="section-number" aria-hidden>
         08
       </span>
-      <div
+      <motion.div
         className="absolute top-0 left-1/4 w-96 h-96 rounded-full -z-10 pointer-events-none"
         style={{
           background:
             "radial-gradient(circle, rgba(245,158,11,0.09) 0%, rgba(245,158,11,0.02) 50%, transparent 70%)",
         }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
-      <div
+      <motion.div
         className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full -z-10 pointer-events-none"
         style={{
           background:
             "radial-gradient(circle, rgba(14,165,233,0.09) 0%, rgba(14,165,233,0.02) 50%, transparent 70%)",
         }}
+        animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <div className="container px-6 mx-auto max-w-4xl relative z-10">
-        <div className="text-center mb-16 reveal">
+        <ScrollReveal className="text-center mb-16">
           <span
             className="section-label"
             style={{ color: "#f59e0b", borderColor: "rgba(245,158,11,0.3)" }}
@@ -95,98 +106,127 @@ export function ContactSection({
             Have a project, idea, or freelance opportunity? Drop me a message or
             connect directly.
           </p>
-        </div>
+        </ScrollReveal>
 
-        <div className="grid gap-8 md:grid-cols-12 reveal">
+        <div className="grid gap-8 md:grid-cols-12">
           {/* Quick Action Info Cards */}
-          <div className="md:col-span-5 space-y-4">
+          <StaggerContainer className="md:col-span-5 space-y-4" stagger={0.12}>
             {/* One-Click Copy Email */}
-            <div
-              onClick={handleCopyEmail}
-              className="glass-card rounded-2xl p-5 cursor-pointer hover:border-amber-500/50 transition-all group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500">
-                    <Mail className="w-5 h-5" />
+            <motion.div variants={staggerItem}>
+              <motion.div
+                onClick={handleCopyEmail}
+                className="glass-card rounded-2xl p-5 cursor-pointer hover:border-amber-500/50 transition-all group"
+                whileHover={{ scale: 1.02, x: 4 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-500"
+                      whileHover={{ rotate: 15 }}
+                    >
+                      <Mail className="w-5 h-5" />
+                    </motion.div>
+                    <div>
+                      <div className="text-xs font-mono text-muted-foreground">
+                        Direct Email
+                      </div>
+                      <div className="text-sm font-semibold text-foreground">
+                        {email}
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs font-mono text-muted-foreground">
-                      Direct Email
-                    </div>
-                    <div className="text-sm font-semibold text-foreground">
-                      {email}
-                    </div>
+                  <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-muted-foreground group-hover:text-amber-500 transition-colors">
+                    {copiedEmail ? (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ type: "spring" }}
+                      >
+                        <Check className="w-4 h-4 text-emerald-500" />
+                      </motion.div>
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
                   </div>
                 </div>
-                <div className="p-2 rounded-lg bg-slate-100 dark:bg-white/5 text-muted-foreground group-hover:text-amber-500 transition-colors">
-                  {copiedEmail ? (
-                    <Check className="w-4 h-4 text-emerald-500" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </div>
-              </div>
-              {copiedEmail && (
-                <p className="text-[11px] text-emerald-500 mt-2 font-mono">
-                  ✓ Copied to clipboard!
-                </p>
-              )}
-            </div>
+                {copiedEmail && (
+                  <motion.p
+                    className="text-[11px] text-emerald-500 mt-2 font-mono"
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    ✓ Copied to clipboard!
+                  </motion.p>
+                )}
+              </motion.div>
+            </motion.div>
 
             {/* WhatsApp / Direct Chat */}
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-card rounded-2xl p-5 block hover:border-emerald-500/50 transition-all group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                    <Phone className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-mono text-muted-foreground">
-                      WhatsApp Chat
+            <motion.div variants={staggerItem}>
+              <motion.a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-card rounded-2xl p-5 block hover:border-emerald-500/50 transition-all group"
+                whileHover={{ scale: 1.02, x: 4 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400"
+                      whileHover={{ rotate: -15 }}
+                    >
+                      <Phone className="w-5 h-5" />
+                    </motion.div>
+                    <div>
+                      <div className="text-xs font-mono text-muted-foreground">
+                        WhatsApp Chat
+                      </div>
+                      <div className="text-sm font-semibold text-foreground">
+                        {whatsapp}
+                      </div>
                     </div>
-                    <div className="text-sm font-semibold text-foreground">
-                      {whatsapp}
-                    </div>
                   </div>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-emerald-500 transition-colors" />
                 </div>
-                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-emerald-500 transition-colors" />
-              </div>
-            </a>
+              </motion.a>
+            </motion.div>
 
             {/* Fiverr Profile Direct */}
-            <a
-              href={fiverrUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="glass-card rounded-2xl p-5 block hover:border-emerald-500/50 transition-all group"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#1dbf73]/15 border border-[#1dbf73]/30 flex items-center justify-center text-[#1dbf73]">
-                    <Star className="w-5 h-5 fill-current" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-mono text-muted-foreground">
-                      Fiverr Seller
+            <motion.div variants={staggerItem}>
+              <motion.a
+                href={fiverrUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass-card rounded-2xl p-5 block hover:border-emerald-500/50 transition-all group"
+                whileHover={{ scale: 1.02, x: 4 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <motion.div
+                      className="w-10 h-10 rounded-xl bg-[#1dbf73]/15 border border-[#1dbf73]/30 flex items-center justify-center text-[#1dbf73]"
+                      whileHover={{ rotate: 15 }}
+                    >
+                      <Star className="w-5 h-5 fill-current" />
+                    </motion.div>
+                    <div>
+                      <div className="text-xs font-mono text-muted-foreground">
+                        Fiverr Seller
+                      </div>
+                      <div className="text-sm font-semibold text-foreground">
+                        fiverr.com/{fiverrUrl?.split("/").pop() || "musman079"}
+                      </div>
                     </div>
-                    <div className="text-sm font-semibold text-foreground">
-                      fiverr.com/{fiverrUrl?.split("/").pop() || "musman079"}
-                    </div>
                   </div>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-[#1dbf73] transition-colors" />
                 </div>
-                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-[#1dbf73] transition-colors" />
-              </div>
-            </a>
-          </div>
+              </motion.a>
+            </motion.div>
+          </StaggerContainer>
 
           {/* Interactive Contact Form */}
-          <div className="md:col-span-7">
+          <ScrollReveal direction="right" distance={60} className="md:col-span-7">
             <form
               onSubmit={onSubmit}
               className="glass-card rounded-3xl p-7 sm:p-8 space-y-4"
@@ -201,7 +241,12 @@ export function ContactSection({
                 aria-hidden="true"
               />
 
-              <div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+              >
                 <label className="text-xs font-mono uppercase text-muted-foreground font-bold block mb-1.5">
                   Your Name
                 </label>
@@ -215,9 +260,15 @@ export function ContactSection({
                   placeholder="e.g. Alex Johnson"
                   className="admin-input"
                 />
-              </div>
+              </motion.div>
 
-              <div className="grid gap-4 sm:grid-cols-2">
+              <motion.div
+                className="grid gap-4 sm:grid-cols-2"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+              >
                 <div>
                   <label className="text-xs font-mono uppercase text-muted-foreground font-bold block mb-1.5">
                     Your Email
@@ -262,9 +313,14 @@ export function ContactSection({
                     </option>
                   </select>
                 </div>
-              </div>
+              </motion.div>
 
-              <div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+              >
                 <label className="text-xs font-mono uppercase text-muted-foreground font-bold block mb-1.5">
                   Project Details / Message
                 </label>
@@ -278,49 +334,64 @@ export function ContactSection({
                   placeholder="Tell me about your goals, features, or timeline..."
                   className="admin-input resize-none"
                 />
-              </div>
+              </motion.div>
 
               {errorMessage && (
-                <div className="p-3.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-500 text-sm flex items-center gap-2 font-medium">
+                <motion.div
+                  className="p-3.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-500 text-sm flex items-center gap-2 font-medium"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
                   <span className="font-bold">Error:</span> {errorMessage}
-                </div>
+                </motion.div>
               )}
 
               {status === "sent" ? (
-                <div className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-2 font-medium">
+                <motion.div
+                  className="p-3.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm flex items-center gap-2 font-medium"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ type: "spring" }}
+                >
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                   <span>
                     Message received successfully! Usman will reply within 24
                     hours.
                   </span>
-                </div>
+                </motion.div>
               ) : (
-                <Button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="w-full gap-2 text-xs font-bold py-5 btn-primary-glow"
-                  style={{
-                    background: "linear-gradient(135deg,#f59e0b,#0ea5e9)",
-                    color: "#000",
-                    border: "none",
-                    opacity: status === "loading" ? 0.7 : 1,
-                  }}
-                >
-                  {status === "loading" ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                      <span>Sending Message...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      <span>Send Direct Message</span>
-                    </>
-                  )}
-                </Button>
+                <MagneticButton strength={0.15} className="w-full">
+                  <Button
+                    type="submit"
+                    disabled={status === "loading"}
+                    className="w-full gap-2 text-xs font-bold py-5 btn-primary-glow"
+                    style={{
+                      background: "linear-gradient(135deg,#f59e0b,#0ea5e9)",
+                      color: "#000",
+                      border: "none",
+                      opacity: status === "loading" ? 0.7 : 1,
+                    }}
+                  >
+                    {status === "loading" ? (
+                      <>
+                        <motion.span
+                          className="w-4 h-4 border-2 border-black border-t-transparent rounded-full"
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        />
+                        <span>Sending Message...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Send Direct Message</span>
+                      </>
+                    )}
+                  </Button>
+                </MagneticButton>
               )}
             </form>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>

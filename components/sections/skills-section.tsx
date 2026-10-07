@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import {
   Code2,
   Server,
@@ -8,9 +9,15 @@ import {
   Globe,
   GitBranch,
 } from "lucide-react";
-import { SpotlightCard, TechBadge } from "@/components/ui-helpers";
+import { TechBadge } from "@/components/ui-helpers";
+import {
+  ScrollReveal,
+  StaggerContainer,
+  staggerItem,
+  MotionTiltCard,
+} from "@/components/motion-primitives";
 
-const SKILL_ICONS: Record<string, React.ElementType> = {
+const SKILL_ICONS: Record<string, any> = {
   Frontend: Code2,
   Backend: Server,
   Design: Palette,
@@ -39,7 +46,7 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
         03
       </span>
       <div className="container px-6 mx-auto max-w-5xl relative z-10">
-        <div className="text-center mb-16 reveal">
+        <ScrollReveal className="text-center mb-16">
           <span
             className="section-label"
             style={{ color: "#06b6d4", borderColor: "rgba(6,182,212,0.3)" }}
@@ -52,57 +59,74 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
           <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
             Frameworks, databases, and development tools I build production applications with.
           </p>
-        </div>
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        </ScrollReveal>
+
+        <StaggerContainer className="grid gap-5 md:grid-cols-2 lg:grid-cols-4" stagger={0.12}>
           {skills.map((sk, i) => {
             const Icon = SKILL_ICONS[sk.category] ?? SKILL_ICONS.default;
             return (
-              <SpotlightCard
-                key={sk.id}
-                className="rounded-2xl p-6 glass-card"
-                style={{ transitionDelay: `${i * 0.08}s` }}
-              >
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                  style={{
-                    background: `${sk.color}14`,
-                    border: `1px solid ${sk.color}30`,
-                    boxShadow: `0 0 16px ${sk.color}20`,
-                  }}
-                >
-                  <Icon style={{ color: sk.color }} className="h-6 w-6" />
-                </div>
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-semibold text-base text-foreground">
-                    {sk.category}
-                  </h3>
-                  <span
-                    className="text-xs font-mono font-semibold"
-                    style={{ color: sk.color }}
-                  >
-                    {sk.level}%
-                  </span>
-                </div>
-                <div className="skill-bar mb-4">
-                  <div
-                    className="skill-bar-fill"
+              <motion.div key={sk.id} variants={staggerItem}>
+                <MotionTiltCard className="rounded-2xl p-6 glass-card h-full">
+                  <motion.div
+                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
                     style={{
-                      width: `${sk.level}%`,
-                      background: `linear-gradient(90deg,${sk.color},${
-                        sk.color === "#f59e0b" ? "#0ea5e9" : "#f59e0b"
-                      })`,
+                      background: `${sk.color}14`,
+                      border: `1px solid ${sk.color}30`,
+                      boxShadow: `0 0 16px ${sk.color}20`,
                     }}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {sk.items.map((s) => (
-                    <TechBadge key={s} label={s} />
-                  ))}
-                </div>
-              </SpotlightCard>
+                    whileHover={{ scale: 1.2, rotate: 15 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <Icon style={{ color: sk.color }} className="h-6 w-6" />
+                  </motion.div>
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-semibold text-base text-foreground">
+                      {sk.category}
+                    </h3>
+                    <motion.span
+                      className="text-xs font-mono font-semibold"
+                      style={{ color: sk.color }}
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                    >
+                      {sk.level}%
+                    </motion.span>
+                  </div>
+                  <div className="skill-bar mb-4">
+                    <motion.div
+                      className="skill-bar-fill"
+                      style={{
+                        background: `linear-gradient(90deg,${sk.color},${
+                          sk.color === "#f59e0b" ? "#0ea5e9" : "#f59e0b"
+                        })`,
+                        transformOrigin: "left",
+                      }}
+                      initial={{ scaleX: 0 }}
+                      whileInView={{ scaleX: sk.level / 100 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1.2, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {sk.items.map((s, j) => (
+                      <motion.span
+                        key={s}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.1 + j * 0.04 }}
+                        whileHover={{ scale: 1.12, y: -2 }}
+                      >
+                        <TechBadge label={s} />
+                      </motion.span>
+                    ))}
+                  </div>
+                </MotionTiltCard>
+              </motion.div>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

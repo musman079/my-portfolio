@@ -1,9 +1,15 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Star, ExternalLink } from "lucide-react";
 import { SpotlightCard } from "@/components/ui-helpers";
+import {
+  ScrollReveal,
+  StaggerContainer,
+  staggerItem,
+} from "@/components/motion-primitives";
 
 interface ReviewItem {
   id: string;
@@ -41,7 +47,7 @@ export function ReviewsSection({
         07
       </span>
       <div className="container px-6 mx-auto max-w-5xl relative z-10">
-        <div className="text-center mb-6 reveal">
+        <ScrollReveal className="text-center mb-6">
           <span
             className="section-label"
             style={{ color: "#10b981", borderColor: "rgba(16,185,129,0.3)" }}
@@ -54,13 +60,21 @@ export function ReviewsSection({
           <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
             100% verified 5-star ratings from international clients across the globe.
           </p>
-        </div>
+        </ScrollReveal>
 
-        <div className="flex flex-wrap items-center justify-center gap-5 mb-12 glass-card rounded-2xl px-8 py-5 max-w-xl mx-auto reveal">
+        <ScrollReveal className="flex flex-wrap items-center justify-center gap-5 mb-12 glass-card rounded-2xl px-8 py-5 max-w-xl mx-auto">
           <div className="flex items-center gap-2">
             <div className="flex gap-0.5">
               {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className="h-5 w-5 fill-yellow-400 star-gold" />
+                <motion.div
+                  key={s}
+                  initial={{ opacity: 0, scale: 0, rotate: -180 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: s * 0.1, type: "spring", stiffness: 300 }}
+                >
+                  <Star className="h-5 w-5 fill-yellow-400 star-gold" />
+                </motion.div>
               ))}
             </div>
             <span className="font-bold text-xl text-foreground">{fiverrRating}</span>
@@ -76,77 +90,83 @@ export function ReviewsSection({
               View Profile <ExternalLink className="h-3 w-3" />
             </Button>
           </a>
-        </div>
+        </ScrollReveal>
 
         {reviews.length === 0 ? (
-          <div className="text-center py-12 px-6 rounded-2xl glass-card border border-border border-dashed max-w-md mx-auto reveal">
+          <ScrollReveal className="text-center py-12 px-6 rounded-2xl glass-card border border-border border-dashed max-w-md mx-auto">
             <p className="text-sm font-medium text-muted-foreground">
               New client reviews are coming soon! Check back later or view live
               feedback on Fiverr.
             </p>
-          </div>
+          </ScrollReveal>
         ) : (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <StaggerContainer className="grid gap-5 md:grid-cols-2 lg:grid-cols-3" stagger={0.12}>
             {reviews.map(
               ({ name, country, rating, review, date, project }, i) => (
-                <SpotlightCard
-                  key={i}
-                  className="rounded-2xl p-6 relative review-quote glass-card"
-                  style={{ transitionDelay: `${i * 0.08}s` }}
-                >
-                  <div className="flex items-center justify-between mb-4 relative z-10">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
-                        style={{
-                          background:
-                            "linear-gradient(135deg,rgba(245,158,11,0.15),rgba(14,165,233,0.15))",
-                          border: "1px solid rgba(245,158,11,0.28)",
-                          color: "#f59e0b",
-                        }}
-                      >
-                        {name?.[0]?.toUpperCase()}
-                      </div>
-                      <div>
-                        <div className="font-medium text-sm text-foreground">
-                          {name}
+                <motion.div key={i} variants={staggerItem}>
+                  <motion.div
+                    whileHover={{ y: -8, scale: 1.02 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                  >
+                    <SpotlightCard
+                      className="rounded-2xl p-6 relative review-quote glass-card h-full"
+                    >
+                      <div className="flex items-center justify-between mb-4 relative z-10">
+                        <div className="flex items-center gap-3">
+                          <motion.div
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold"
+                            style={{
+                              background:
+                                "linear-gradient(135deg,rgba(245,158,11,0.15),rgba(14,165,233,0.15))",
+                              border: "1px solid rgba(245,158,11,0.28)",
+                              color: "#f59e0b",
+                            }}
+                            whileHover={{ scale: 1.2, rotate: 10 }}
+                          >
+                            {name?.[0]?.toUpperCase()}
+                          </motion.div>
+                          <div>
+                            <div className="font-medium text-sm text-foreground">
+                              {name}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {country}
+                            </div>
+                          </div>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          {country}
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: rating }).map((_, j) => (
+                            <Star
+                              key={j}
+                              className="h-4 w-4 fill-yellow-400 star-gold"
+                            />
+                          ))}
                         </div>
                       </div>
-                    </div>
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: rating }).map((_, j) => (
-                        <Star
-                          key={j}
-                          className="h-4 w-4 fill-yellow-400 star-gold"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-foreground/90 text-sm leading-relaxed mb-4 relative z-10">
-                    &quot;{review}&quot;
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 relative z-10 border-t border-border">
-                    <span className="font-mono opacity-80 text-amber-500 font-semibold">
-                      {project}
-                    </span>
-                    <span>{date}</span>
-                  </div>
-                </SpotlightCard>
+                      <p className="text-foreground/90 text-sm leading-relaxed mb-4 relative z-10">
+                        &quot;{review}&quot;
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 relative z-10 border-t border-border">
+                        <span className="font-mono opacity-80 text-amber-500 font-semibold">
+                          {project}
+                        </span>
+                        <span>{date}</span>
+                      </div>
+                    </SpotlightCard>
+                  </motion.div>
+                </motion.div>
               )
             )}
-          </div>
+          </StaggerContainer>
         )}
 
-        <div className="text-center mt-10 reveal">
+        <ScrollReveal className="text-center mt-10">
           <a href={fiverrUrl} target="_blank" rel="noopener noreferrer">
             <Button size="lg" className="gap-2 px-8 btn-fiverr">
               See All Reviews on Fiverr <ExternalLink className="h-4 w-4" />
             </Button>
           </a>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

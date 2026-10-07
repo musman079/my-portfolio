@@ -26,7 +26,7 @@ interface CommandItem {
   id: string
   label: string
   category: "Navigation" | "Actions" | "Social & Contact"
-  icon: React.ElementType
+  icon: any
   action: () => void
   keywords?: string[]
 }
