@@ -195,7 +195,7 @@ export function AboutSection({ profile, stats, onScrollTo }: AboutSectionProps) 
 
             <ScrollReveal direction="right" distance={80}>
               <div className="flex justify-center">
-                <MotionTiltCard className="relative">
+                <MotionTiltCard className="relative" glare={false} maxTilt={12}>
                   <div
                     className="absolute inset-0 rounded-full opacity-35 pointer-events-none"
                     style={{

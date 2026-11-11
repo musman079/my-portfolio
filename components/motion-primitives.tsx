@@ -7,6 +7,8 @@ import {
   useTransform,
   useSpring,
   useInView,
+  useMotionValue,
+  useMotionTemplate,
   type Variants,
 } from "framer-motion";
 
@@ -235,25 +237,75 @@ export function SmoothCounter({
   );
 }
 
-/* ─── FLOATING CARD (High-Performance Spring Hover) ─── */
+/* ─── 3D TILT CARD (pointer-tracked perspective tilt + glare) ─── */
 export function MotionTiltCard({
   children,
   className,
   style,
+  onClick,
+  maxTilt = 9,
+  glare = true,
+  lift = 6,
 }: {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onClick?: () => void;
+  maxTilt?: number;
+  glare?: boolean;
+  lift?: number;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const spring = { stiffness: 220, damping: 20, mass: 0.6 };
+  const rotateX = useSpring(0, spring);
+  const rotateY = useSpring(0, spring);
+  const hover = useSpring(0, { stiffness: 260, damping: 26 });
+  const y = useTransform(hover, [0, 1], [0, -lift]);
+  const scale = useTransform(hover, [0, 1], [1, 1.02]);
+  const gx = useMotionValue(50);
+  const gy = useMotionValue(50);
+  const glareBg = useMotionTemplate`radial-gradient(380px circle at ${gx}% ${gy}%, var(--tilt-glare), transparent 65%)`;
+
+  const handleMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    const py = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+    rotateY.set((px - 0.5) * 2 * maxTilt);
+    rotateX.set(-(py - 0.5) * 2 * maxTilt);
+    gx.set(px * 100);
+    gy.set(py * 100);
+    hover.set(1);
+    // also feeds the .spotlight-card radial highlight
+    el.style.setProperty("--mx", `${px * 100}%`);
+    el.style.setProperty("--my", `${py * 100}%`);
+  };
+
+  const handleLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+    hover.set(0);
+  };
+
   return (
     <motion.div
-      className={className}
-      style={style}
-      whileHover={{ y: -6, scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      ref={ref}
+      className={`tilt-3d ${className ?? ""}`}
+      style={{ ...style, rotateX, rotateY, y, scale, transformPerspective: 900 }}
+      onPointerMove={handleMove}
+      onPointerLeave={handleLeave}
+      onClick={onClick}
     >
       {children}
+      {glare && (
+        <motion.div
+          aria-hidden
+          className="tilt-glare"
+          style={{ background: glareBg, opacity: hover }}
+        />
+      )}
     </motion.div>
   );
 }

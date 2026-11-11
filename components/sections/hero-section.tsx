@@ -17,6 +17,7 @@ import {
   ScrollReveal,
   MagneticButton,
   TextReveal,
+  MotionTiltCard,
 } from "@/components/motion-primitives";
 
 interface HeroSectionProps {
@@ -267,7 +268,12 @@ export function HeroSection({
             transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             style={{ perspective: "1000px" }}
           >
-            <div className="relative w-full flex justify-center lg:justify-end">
+            <MotionTiltCard
+              className="relative w-full max-w-[390px]"
+              glare={false}
+              maxTilt={10}
+              lift={0}
+            >
               <CodeWindow
                 onOpenTerminal={onOpenTerminal}
                 devName={profile.name || "Muhammad Usman"}
@@ -296,7 +302,7 @@ export function HeroSection({
                 <Code2 className="h-4 w-4 text-sky-500" />
                 <span>MERN & Next.js Expert</span>
               </motion.div>
-            </div>
+            </MotionTiltCard>
           </motion.div>
         </div>
 

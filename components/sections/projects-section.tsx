@@ -21,6 +21,7 @@ import {
   StaggerContainer,
   staggerItem,
   MagneticButton,
+  MotionTiltCard,
 } from "@/components/motion-primitives";
 
 const PROJECT_ICONS: Record<string, any> = {
@@ -137,14 +138,14 @@ export function ProjectsSection({
                     exit={{ opacity: 0, scale: 0.8, y: -20 }}
                     transition={{ duration: 0.4, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <motion.div
+                    <MotionTiltCard
                       className="rounded-2xl overflow-hidden group flex flex-col justify-between glass-card spotlight-card cursor-pointer h-full"
                       onClick={() => {
                         playClickSound();
                         onSelectProject(proj);
                       }}
-                      whileHover={{ y: -8, scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                      maxTilt={7}
+                      lift={8}
                     >
                       <div>
                         <motion.div
@@ -275,7 +276,7 @@ export function ProjectsSection({
                           )}
                         </div>
                       </div>
-                    </motion.div>
+                    </MotionTiltCard>
                   </motion.div>
                 );
               })}

@@ -33,8 +33,8 @@ import type { ProjectDetail } from "@/components/project-modal";
 import { GlowCursor } from "@/components/motion-primitives";
 
 // Lazy-loaded heavy tools & modals (SSR: false for optimal performance)
-const Hero3DScene = dynamic(
-  () => import("@/components/hero-3d-scene").then((m) => m.Hero3DScene),
+const Scene3D = dynamic(
+  () => import("@/components/scene-3d").then((m) => m.Scene3D),
   { ssr: false }
 );
 const DevTerminal = dynamic(
@@ -295,6 +295,9 @@ export default function Portfolio() {
         aria-hidden
       />
 
+      {/* ====== GLOBAL SCROLL-DRIVEN 3D SCENE (fixed, behind all content) ====== */}
+      {isMounted && <Scene3D />}
+
       {/* ====== MODALS & TOOLS ====== */}
       <DevTerminal isOpen={terminalOpen} onClose={() => setTerminalOpen(false)} />
       <CommandPalette
@@ -358,13 +361,14 @@ export default function Portfolio() {
         onOpenPalette={() => setPaletteOpen(true)}
       />
 
+      {/* All page content sits in its own layer above the 3D canvas */}
+      <div className="relative z-[1]">
       {/* ====== HERO SECTION ====== */}
       <HeroSection
         profile={dynProfile}
         typingText={typingText}
         onScrollTo={scrollTo}
         onOpenTerminal={() => setTerminalOpen(true)}
-        scene3D={isMounted ? <Hero3DScene /> : null}
       />
 
       {/* ====== ABOUT & STATS & TECH MARQUEE ====== */}
@@ -483,6 +487,7 @@ export default function Portfolio() {
         linkedinUrl={dynProfile.linkedin}
         email={dynProfile.email}
       />
+      </div>
     </div>
   );
 }

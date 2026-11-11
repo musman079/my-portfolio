@@ -10,6 +10,7 @@ import {
   GitBranch,
 } from "lucide-react";
 import { TechBadge } from "@/components/ui-helpers";
+import { SkillSphere, type SphereTag } from "@/components/skill-sphere";
 import {
   ScrollReveal,
   StaggerContainer,
@@ -40,6 +41,19 @@ interface SkillsSectionProps {
 }
 
 export function SkillsSection({ skills }: SkillsSectionProps) {
+  const sphereTags = React.useMemo(() => {
+    const seen = new Set<string>();
+    const tags: SphereTag[] = [];
+    skills.forEach((sk) =>
+      (sk.items || []).forEach((label) => {
+        if (seen.has(label)) return;
+        seen.add(label);
+        tags.push({ label, color: sk.color });
+      })
+    );
+    return tags;
+  }, [skills]);
+
   return (
     <section id="skills" className="py-28 relative overflow-hidden">
       <span className="section-number" aria-hidden>
@@ -60,6 +74,15 @@ export function SkillsSection({ skills }: SkillsSectionProps) {
             Frameworks, databases, and development tools I build production applications with.
           </p>
         </ScrollReveal>
+
+        {sphereTags.length > 3 && (
+          <ScrollReveal className="mb-14">
+            <SkillSphere tags={sphereTags} />
+            <p className="text-center text-[11px] font-mono uppercase tracking-[0.2em] text-muted-foreground mt-4">
+              Drag to spin
+            </p>
+          </ScrollReveal>
+        )}
 
         <StaggerContainer className="grid gap-5 md:grid-cols-2 lg:grid-cols-4" stagger={0.12}>
           {skills.map((sk, i) => {
