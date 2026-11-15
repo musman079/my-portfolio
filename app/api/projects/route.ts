@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import { requireAdminAuth } from "@/lib/auth";
 import { Project } from "@/models/Project";
+import { DEFAULT_PROJECTS } from "@/lib/site-config";
 
 export async function GET() {
   try {
@@ -11,7 +12,8 @@ export async function GET() {
     const mapped = projects.map((p) => ({ ...p.toObject(), id: p._id.toString() }));
     return NextResponse.json(mapped);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch projects" }, { status: 500 });
+    console.error("Failed to fetch projects from DB, falling back to defaults:", error);
+    return NextResponse.json(DEFAULT_PROJECTS);
   }
 }
 

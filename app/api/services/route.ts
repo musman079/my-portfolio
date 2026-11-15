@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import { requireAdminAuth } from "@/lib/auth";
 import { Service } from "@/models/Service";
+import { DEFAULT_SERVICES } from "@/lib/site-config";
 
 export async function GET() {
   try {
@@ -10,7 +11,8 @@ export async function GET() {
     const mapped = services.map((s) => ({ ...s.toObject(), id: s._id.toString() }));
     return NextResponse.json(mapped);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch services" }, { status: 500 });
+    console.error("Failed to fetch services from DB, falling back to defaults:", error);
+    return NextResponse.json(DEFAULT_SERVICES);
   }
 }
 

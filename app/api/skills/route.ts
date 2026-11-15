@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import { requireAdminAuth } from "@/lib/auth";
 import { Skill } from "@/models/Skill";
+import { DEFAULT_SKILLS } from "@/lib/site-config";
 
 export async function GET() {
   try {
@@ -10,7 +11,8 @@ export async function GET() {
     const mapped = skills.map((s) => ({ ...s.toObject(), id: s._id.toString() }));
     return NextResponse.json(mapped);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch skills" }, { status: 500 });
+    console.error("Failed to fetch skills from DB, falling back to defaults:", error);
+    return NextResponse.json(DEFAULT_SKILLS);
   }
 }
 

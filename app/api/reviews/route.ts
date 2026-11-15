@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import connectToDatabase from "@/lib/mongodb";
 import { requireAdminAuth } from "@/lib/auth";
 import { Review } from "@/models/Review";
+import { DEFAULT_REVIEWS } from "@/lib/site-config";
 
 export async function GET() {
   try {
@@ -10,7 +11,8 @@ export async function GET() {
     const mapped = reviews.map((r) => ({ ...r.toObject(), id: r._id.toString() }));
     return NextResponse.json(mapped);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
+    console.error("Failed to fetch reviews from DB, falling back to defaults:", error);
+    return NextResponse.json(DEFAULT_REVIEWS);
   }
 }
 
