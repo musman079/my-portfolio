@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Terminal, Search } from "lucide-react";
+import { Terminal, Search, ArrowUp } from "lucide-react";
 import {
   DEFAULT_SITE_CONFIG,
   DEFAULT_PROJECTS,
@@ -130,7 +130,7 @@ export default function Portfolio() {
       fetch("/api/profile").then((r) => r.json()).catch(() => null),
     ]).then(([projects, reviews, skills, services, profile]) => {
       if (Array.isArray(projects) && projects.length) setDynProjects(projects);
-      if (Array.isArray(reviews)) setDynReviews(reviews.length ? reviews : []);
+      if (Array.isArray(reviews) && reviews.length) setDynReviews(reviews);
       if (Array.isArray(skills) && skills.length) setDynSkills(skills);
       if (Array.isArray(services) && services.length) setDynServices(services);
       if (profile && profile.name)
@@ -297,6 +297,7 @@ export default function Portfolio() {
 
       {/* ====== GLOBAL SCROLL-DRIVEN 3D SCENE (fixed, behind all content) ====== */}
       {isMounted && <Scene3D />}
+      {isMounted && <GlowCursor />}
 
       {/* ====== MODALS & TOOLS ====== */}
       <DevTerminal isOpen={terminalOpen} onClose={() => setTerminalOpen(false)} />
@@ -326,6 +327,19 @@ export default function Portfolio() {
 
       {/* ====== FLOATING ACTION SHORTCUTS (Right) ====== */}
       <div className="fixed bottom-6 right-6 z-40 flex flex-col gap-2.5">
+        {navScrolled && (
+          <button
+            onClick={() => {
+              playClickSound();
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }}
+            className="p-3.5 rounded-full bg-[#111420] text-emerald-400 border border-emerald-500/40 shadow-xl hover:scale-110 hover:shadow-[0_0_25px_rgba(16,185,129,0.4)] transition-all duration-200"
+            aria-label="Back to Top"
+            title="Back to Top"
+          >
+            <ArrowUp className="w-5 h-5" />
+          </button>
+        )}
         <button
           onClick={() => {
             playClickSound();
@@ -391,7 +405,17 @@ export default function Portfolio() {
       <div className="section-divider max-w-5xl" />
 
       {/* ====== SERVICES ====== */}
-      <ServicesSection services={dynServices} />
+      <ServicesSection
+        services={dynServices}
+        onSelectService={(serviceTitle) => {
+          playClickSound();
+          setContactForm((prev) => ({
+            ...prev,
+            projectType: serviceTitle,
+          }));
+          scrollTo("contact");
+        }}
+      />
 
       <div className="section-divider max-w-5xl" />
 

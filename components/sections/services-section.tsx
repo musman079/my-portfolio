@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Code2, Server, Palette, Globe, CheckCircle2 } from "lucide-react";
+import { Code2, Server, Palette, Globe, CheckCircle2, ArrowRight } from "lucide-react";
 import {
   ScrollReveal,
   StaggerContainer,
@@ -27,9 +27,10 @@ interface ServiceItem {
 
 interface ServicesSectionProps {
   services: ServiceItem[];
+  onSelectService?: (title: string) => void;
 }
 
-export function ServicesSection({ services }: ServicesSectionProps) {
+export function ServicesSection({ services, onSelectService }: ServicesSectionProps) {
   return (
     <section id="services" className="py-28 relative overflow-hidden">
       <span className="section-number" aria-hidden>
@@ -98,6 +99,17 @@ export function ServicesSection({ services }: ServicesSectionProps) {
                       </motion.li>
                     ))}
                   </ul>
+                  {onSelectService && (
+                    <button
+                      type="button"
+                      onClick={() => onSelectService(svc.title)}
+                      className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold transition-all group-hover:gap-2.5"
+                      style={{ color: svc.color }}
+                    >
+                      Request This Service
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </MotionTiltCard>
               </motion.div>
             );

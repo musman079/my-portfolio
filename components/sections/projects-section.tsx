@@ -44,28 +44,30 @@ export function ProjectsSection({
 }: ProjectsSectionProps) {
   const [projectFilter, setProjectFilter] = useState<string>("All");
 
-  const filteredProjects = projects.filter((p) => {
-    if (projectFilter === "All") return true;
-    if (projectFilter === "Full-Stack MERN")
+  const matchesFilter = (p: ProjectDetail, tab: string) => {
+    if (tab === "All") return true;
+    if (tab === "Full-Stack MERN")
       return (
         p.category?.includes("MERN") ||
         p.tech.includes("MongoDB") ||
         p.tech.includes("Express.js")
       );
-    if (projectFilter === "Next.js / Frontend")
+    if (tab === "Next.js / Frontend")
       return (
         p.tech.includes("Next.js") ||
         p.tech.includes("React") ||
         p.tech.includes("Tailwind CSS")
       );
-    if (projectFilter === "Mobile & AI")
+    if (tab === "Mobile & AI")
       return (
         p.tech.includes("Flutter") ||
         p.tech.includes("TensorFlow Lite") ||
         p.category?.includes("AI")
       );
     return true;
-  });
+  };
+
+  const filteredProjects = projects.filter((p) => matchesFilter(p, projectFilter));
 
   return (
     <section
@@ -117,6 +119,13 @@ export function ProjectsSection({
                   layout
                 >
                   {tab}
+                  <span
+                    className={`ml-1.5 text-[10px] font-mono ${
+                      active ? "text-black/70" : "text-muted-foreground"
+                    }`}
+                  >
+                    ({projects.filter((p) => matchesFilter(p, tab)).length})
+                  </span>
                 </motion.button>
               );
             }

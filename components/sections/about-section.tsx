@@ -9,6 +9,9 @@ import {
   ArrowRight,
   Star,
   Code2,
+  Layers,
+  Award,
+  Rocket,
 } from "lucide-react";
 import {
   TechMarquee,
@@ -37,7 +40,10 @@ export function AboutSection({ profile, stats, onScrollTo }: AboutSectionProps) 
         <div className="absolute inset-0 -z-10 bg-gradient-to-r from-amber-500/5 via-sky-500/5 to-emerald-500/5" />
         <div className="container px-6 mx-auto max-w-5xl">
           <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-5 text-center" stagger={0.12}>
-            {stats.map(({ label, color, num, suffix, isFloat }, i) => (
+            {stats.map(({ label, color, num, suffix, isFloat }, i) => {
+              const STAT_ICONS = [Layers, Rocket, Star, Award];
+              const StatIcon = STAT_ICONS[i % STAT_ICONS.length];
+              return (
               <motion.div key={label} variants={staggerItem}>
                 <MotionTiltCard
                   className="rounded-2xl p-6 flex flex-col items-center gap-3 glass-card"
@@ -52,7 +58,7 @@ export function AboutSection({ profile, stats, onScrollTo }: AboutSectionProps) 
                     whileHover={{ scale: 1.15, rotate: 10 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <Code2 className="h-6 w-6" style={{ color }} />
+                    <StatIcon className="h-6 w-6" style={{ color }} />
                   </motion.div>
                   <div
                     className="text-3xl font-bold"
@@ -65,7 +71,8 @@ export function AboutSection({ profile, stats, onScrollTo }: AboutSectionProps) 
                   </div>
                 </MotionTiltCard>
               </motion.div>
-            ))}
+              );
+            })}
           </StaggerContainer>
         </div>
       </section>

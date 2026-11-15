@@ -150,6 +150,23 @@ export function HeroSection({
                 "Full-Stack MERN & Next.js Engineer crafting scalable, ultra-fast web applications with clean code, secure APIs, and responsive, interactive interfaces."}
             </motion.p>
 
+            {/* Core Stack Strip */}
+            <motion.div
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-8"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.65 }}
+            >
+              {["Next.js 15", "React 19", "TypeScript", "Node.js", "MongoDB"].map((tech) => (
+                <span
+                  key={tech}
+                  className="px-3 py-1 rounded-full text-xs font-mono font-medium bg-card/80 text-foreground/85 border border-border/80 shadow-sm"
+                >
+                  {tech}
+                </span>
+              ))}
+            </motion.div>
+
             <motion.div
               className="flex flex-wrap gap-4 justify-center lg:justify-start mb-10"
               initial={{ opacity: 0, y: 20 }}
@@ -204,12 +221,12 @@ export function HeroSection({
             >
               {[
                 {
-                  href: profile.github || "http://github.com/mani78979",
+                  href: profile.github || "https://github.com/mani78979",
                   icon: <Github className="h-5 w-5" />,
                   label: "GitHub",
                 },
                 {
-                  href: profile.linkedin || "http://www.linkedin.com/in/musman78",
+                  href: profile.linkedin || "https://www.linkedin.com/in/musman78",
                   icon: <Linkedin className="h-5 w-5" />,
                   label: "LinkedIn",
                 },
