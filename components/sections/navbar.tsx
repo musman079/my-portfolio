@@ -55,7 +55,7 @@ export function Navbar({
 
   return (
     <motion.nav
-      className={`fixed z-50 w-full px-4 transition-all duration-500 ${
+      className={`fixed z-50 w-full px-2.5 sm:px-4 transition-all duration-500 ${
         navScrolled ? "top-0" : "top-2"
       }`}
       initial={{ y: -100, opacity: 0 }}
@@ -63,7 +63,7 @@ export function Navbar({
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
       <div
-        className={`flex h-14 items-center justify-between px-6 max-w-6xl mx-auto rounded-2xl transition-all duration-400 ${
+        className={`flex h-14 items-center justify-between px-3.5 sm:px-6 max-w-6xl mx-auto rounded-2xl transition-all duration-400 ${
           navScrolled ? "glass shadow-2xl" : "bg-transparent"
         }`}
         style={navScrolled ? { borderColor: "rgba(245,158,11,0.18)" } : {}}
@@ -253,7 +253,18 @@ export function Navbar({
                   {label}
                 </motion.button>
               ))}
-              <div className="flex gap-2 pt-3">
+              <div className="flex flex-wrap gap-2 pt-3">
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    onOpenPalette();
+                    setIsMenuOpen(false);
+                  }}
+                  variant="outline"
+                  className="flex-1 text-xs gap-1.5 border-border text-foreground"
+                >
+                  <Search className="h-3.5 w-3.5 text-amber-500" /> Search
+                </Button>
                 <Button
                   size="sm"
                   onClick={() => {
@@ -268,7 +279,7 @@ export function Navbar({
                 <Button
                   size="sm"
                   onClick={() => handleLinkClick("contact")}
-                  className="flex-1 gap-1.5 text-xs font-bold"
+                  className="w-full sm:w-auto sm:flex-1 gap-1.5 text-xs font-bold"
                   style={{
                     background: "linear-gradient(135deg,#f59e0b,#0ea5e9)",
                     color: "#000",

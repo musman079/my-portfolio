@@ -45,13 +45,26 @@ export function WhatsAppWidget({
 
   const widgetRef = useRef<HTMLDivElement>(null);
 
-  // Set default position at bottom-left on client mount
+  // Set default position at bottom-left on client mount & clamp on resize
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const defaultX = 24;
-      const defaultY = Math.max(24, window.innerHeight - 80);
-      setPosition({ x: defaultX, y: defaultY });
-    }
+    if (typeof window === "undefined") return;
+    const defaultX = 16;
+    const defaultY = Math.max(16, window.innerHeight - 76);
+    setPosition({ x: defaultX, y: defaultY });
+
+    const handleResize = () => {
+      setPosition((prev) => {
+        if (!prev) return prev;
+        const w = widgetRef.current?.offsetWidth || 180;
+        const h = widgetRef.current?.offsetHeight || 50;
+        return {
+          x: Math.min(Math.max(12, prev.x), Math.max(12, window.innerWidth - w - 12)),
+          y: Math.min(Math.max(12, prev.y), Math.max(12, window.innerHeight - h - 12)),
+        };
+      });
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Pointer Down (Mouse or Touch)

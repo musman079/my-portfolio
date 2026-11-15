@@ -80,7 +80,9 @@ export function SkillSphere({ tags }: { tags: SphereTag[] }) {
       dragging = true;
       lastX = e.clientX;
       lastY = e.clientY;
-      wrap.setPointerCapture(e.pointerId);
+      if (e.pointerType === "mouse") {
+        wrap.setPointerCapture(e.pointerId);
+      }
       wrap.style.cursor = "grabbing";
     };
     const onUp = (e: PointerEvent) => {

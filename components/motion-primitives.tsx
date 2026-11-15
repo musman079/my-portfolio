@@ -310,7 +310,7 @@ export function MotionTiltCard({
   );
 }
 
-/* ─── GLOW CURSOR FOLLOWER ─── */
+/* ─── GLOW CURSOR FOLLOWER (desktop fine-pointer only, GPU-composited) ─── */
 export function GlowCursor({
   color = "rgba(245, 158, 11, 0.15)",
   size = 300,
@@ -322,24 +322,35 @@ export function GlowCursor({
 
   React.useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || typeof window === "undefined") return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
 
     const handleMove = (e: MouseEvent) => {
-      el.style.left = `${e.clientX - size / 2}px`;
-      el.style.top = `${e.clientY - size / 2}px`;
+      el.style.opacity = "1";
+      el.style.transform = `translate3d(${e.clientX - size / 2}px, ${e.clientY - size / 2}px, 0)`;
+    };
+
+    const handleLeave = () => {
+      el.style.opacity = "0";
     };
 
     window.addEventListener("mousemove", handleMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMove);
+    document.addEventListener("mouseleave", handleLeave);
+    return () => {
+      window.removeEventListener("mousemove", handleMove);
+      document.removeEventListener("mouseleave", handleLeave);
+    };
   }, [size]);
 
   return (
     <div
       ref={ref}
-      className="pointer-events-none fixed z-[1] transition-[left,top] duration-300 ease-out"
+      aria-hidden
+      className="hidden md:block pointer-events-none fixed top-0 left-0 z-[1] transition-opacity duration-300 ease-out will-change-transform"
       style={{
         width: size,
         height: size,
+        opacity: 0,
         borderRadius: "50%",
         background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
         filter: "blur(1px)",
