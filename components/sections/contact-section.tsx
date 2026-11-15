@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,9 @@ import {
   Check,
   Send,
   CheckCircle2,
+  Clock,
 } from "lucide-react";
+import { toast } from "sonner";
 import { playSuccessSound } from "@/lib/sound-effects";
 import {
   ScrollReveal,
@@ -59,11 +61,32 @@ export function ContactSection({
   errorMessage,
 }: ContactSectionProps) {
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [localTime, setLocalTime] = useState<string>("");
+
+  useEffect(() => {
+    const updateClock = () => {
+      try {
+        const formatted = new Intl.DateTimeFormat("en-US", {
+          timeZone: "Asia/Karachi",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        }).format(new Date());
+        setLocalTime(formatted);
+      } catch {
+        setLocalTime("");
+      }
+    };
+    updateClock();
+    const timer = setInterval(updateClock, 30000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handleCopyEmail = () => {
     playSuccessSound();
     navigator.clipboard.writeText(email);
     setCopiedEmail(true);
+    toast.success("Email copied to clipboard!");
     setTimeout(() => setCopiedEmail(false), 2500);
   };
 
@@ -106,6 +129,21 @@ export function ContactSection({
             Have a project, idea, or freelance opportunity? Drop me a message or
             connect directly.
           </p>
+          <div className="mt-5 inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 px-4 py-2 rounded-full glass-card border border-border text-xs font-mono text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5 text-emerald-500 font-semibold">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Typically replies in ~1 hr
+            </span>
+            {localTime && (
+              <>
+                <span className="opacity-40">•</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Clock className="w-3.5 h-3.5 text-amber-500" />
+                  PKT (UTC+5): <strong className="text-foreground">{localTime}</strong>
+                </span>
+              </>
+            )}
+          </div>
         </ScrollReveal>
 
         <div className="grid gap-8 md:grid-cols-12">

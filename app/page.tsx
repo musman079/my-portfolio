@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Terminal, Search, ArrowUp } from "lucide-react";
+import { toast } from "sonner";
 import {
   DEFAULT_SITE_CONFIG,
   DEFAULT_PROJECTS,
@@ -26,6 +27,7 @@ import { SkillsSection } from "@/components/sections/skills-section";
 import { ServicesSection } from "@/components/sections/services-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { ReviewsSection } from "@/components/sections/reviews-section";
+import { FaqSection } from "@/components/sections/faq-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { Footer } from "@/components/sections/footer";
 import type { ProjectDetail } from "@/components/project-modal";
@@ -254,6 +256,7 @@ export default function Portfolio() {
 
       if (res.ok) {
         playSuccessSound();
+        toast.success("Message sent! Usman will get back to you shortly.");
         setContactStatus("sent");
         setTimeout(() => {
           setContactStatus("idle");
@@ -267,11 +270,15 @@ export default function Portfolio() {
         }, 5000);
       } else {
         setContactStatus("error");
-        setContactError(data.error || "Failed to send message. Please try again.");
+        const errMsg = data.error || "Failed to send message. Please try again.";
+        setContactError(errMsg);
+        toast.error(errMsg);
       }
     } catch {
       setContactStatus("error");
-      setContactError("Network error. Please reach out directly via WhatsApp.");
+      const netErr = "Network error. Please reach out directly via WhatsApp.";
+      setContactError(netErr);
+      toast.error(netErr);
     }
   };
 
@@ -310,10 +317,13 @@ export default function Portfolio() {
           navigator.clipboard.writeText(
             dynProfile.email || "usmankousar772@gmail.com"
           );
+          toast.success("Email copied to clipboard!");
         }}
       />
       <ProjectModal
         project={selectedProject}
+        projects={dynProjects}
+        onSelectProject={(p) => setSelectedProject(p)}
         onClose={() => setSelectedProject(null)}
       />
 
@@ -469,6 +479,7 @@ export default function Portfolio() {
                   estimatedBudget: budgetStr || prev.estimatedBudget,
                   message: `Hello Usman, I'd like to get started on this project:\n${details}`,
                 }));
+                toast.success("Quote added to your inquiry form!");
 
                 const el = document.getElementById("contact");
                 el?.scrollIntoView({ behavior: "smooth" });
@@ -487,6 +498,11 @@ export default function Portfolio() {
         fiverrLevel={dynProfile.fiverrLevel}
         fiverrUrl={dynProfile.fiverrUrl}
       />
+
+      <div className="section-divider max-w-5xl" />
+
+      {/* ====== FAQ ====== */}
+      <FaqSection />
 
       <div className="section-divider max-w-5xl" />
 

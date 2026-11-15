@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useEffect } from "react"
-import { X, ExternalLink, Github, CheckCircle2 } from "lucide-react"
+import { X, ExternalLink, Github, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { playClickSound } from "@/lib/sound-effects"
 
@@ -62,14 +62,32 @@ const PROJECT_EXTENDED_INFO: Record<string, { longDescription: string; features:
 
 export function ProjectModal({
   project,
+  projects = [],
+  onSelectProject,
   onClose,
 }: {
   project: ProjectDetail | null
+  projects?: ProjectDetail[]
+  onSelectProject?: (project: ProjectDetail) => void
   onClose: () => void
 }) {
+  const currentIndex = project
+    ? projects.findIndex((p) => p.id === project.id || p.title === project.title)
+    : -1
+  const hasPrev = currentIndex > 0 && Boolean(onSelectProject)
+  const hasNext = currentIndex >= 0 && currentIndex < projects.length - 1 && Boolean(onSelectProject)
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
+      if (e.key === "ArrowLeft" && hasPrev && onSelectProject) {
+        playClickSound()
+        onSelectProject(projects[currentIndex - 1])
+      }
+      if (e.key === "ArrowRight" && hasNext && onSelectProject) {
+        playClickSound()
+        onSelectProject(projects[currentIndex + 1])
+      }
     }
     if (project) {
       window.addEventListener("keydown", handleKeyDown)
@@ -79,7 +97,7 @@ export function ProjectModal({
       window.removeEventListener("keydown", handleKeyDown)
       document.body.style.overflow = "auto"
     }
-  }, [project, onClose])
+  }, [project, onClose, hasPrev, hasNext, currentIndex, projects, onSelectProject])
 
   if (!project) return null
 
@@ -203,8 +221,50 @@ export function ProjectModal({
 
         {/* Modal Actions Footer */}
         <div className="p-5 sm:p-6 bg-slate-50 dark:bg-[#0a0c14] border-t border-border flex flex-wrap items-center justify-between gap-4">
-          <div className="text-xs text-muted-foreground font-mono">
-            Developed by Muhammad Usman • Production Ready
+          <div className="flex items-center gap-2">
+            {projects.length > 1 && onSelectProject && currentIndex >= 0 ? (
+              <div className="flex items-center gap-1.5">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={!hasPrev}
+                  onClick={() => {
+                    if (!hasPrev) return
+                    playClickSound()
+                    onSelectProject(projects[currentIndex - 1])
+                  }}
+                  className="h-8 px-2.5 text-xs gap-1"
+                  aria-label="Previous Project"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  Prev
+                </Button>
+                <span className="text-[11px] font-mono text-muted-foreground px-1.5">
+                  {currentIndex + 1}/{projects.length}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={!hasNext}
+                  onClick={() => {
+                    if (!hasNext) return
+                    playClickSound()
+                    onSelectProject(projects[currentIndex + 1])
+                  }}
+                  className="h-8 px-2.5 text-xs gap-1"
+                  aria-label="Next Project"
+                >
+                  Next
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            ) : (
+              <div className="text-xs text-muted-foreground font-mono">
+                Developed by Muhammad Usman • Production Ready
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             {project.github && (
