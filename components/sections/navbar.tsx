@@ -63,7 +63,7 @@ export function Navbar({
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
       <div
-        className={`flex h-14 items-center justify-between px-3.5 sm:px-6 max-w-6xl mx-auto rounded-2xl transition-all duration-400 ${
+        className={`flex h-14 items-center justify-between gap-4 px-3.5 sm:px-6 max-w-6xl mx-auto rounded-2xl transition-all duration-400 ${
           navScrolled ? "glass shadow-2xl" : "bg-transparent"
         }`}
         style={navScrolled ? { borderColor: "rgba(245,158,11,0.18)" } : {}}
@@ -80,13 +80,13 @@ export function Navbar({
         </a>
 
         {/* Desktop Links */}
-        <div className="hidden lg:flex items-center gap-3.5 xl:gap-6">
+        <div className="hidden lg:flex items-center gap-3.5 xl:gap-5 shrink-0">
           {NAV_LINKS.map(({ label, id }, i) => (
             <motion.button
               key={id}
               id={`nav-${id}`}
               onClick={() => handleLinkClick(id)}
-              className={`nav-link text-xs uppercase tracking-wider font-mono ${
+              className={`nav-link text-xs uppercase tracking-wider font-mono whitespace-nowrap ${
                 activeSection === id ? "active text-amber-500 font-bold" : ""
               }`}
               whileHover={{ y: -2 }}
@@ -109,7 +109,7 @@ export function Navbar({
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
           {/* Command Palette Trigger */}
           <motion.button
             onClick={() => {

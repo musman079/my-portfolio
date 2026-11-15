@@ -21,7 +21,7 @@ export function Footer({
   email = "usmankousar772@gmail.com",
 }: FooterProps) {
   return (
-    <footer className="py-12 relative border-t border-border overflow-hidden">
+    <footer className="pt-12 pb-24 relative border-t border-border overflow-hidden">
       {/* Animated gradient line at top */}
       <motion.div
         className="absolute top-0 left-0 right-0 h-px"
@@ -89,7 +89,7 @@ export function Footer({
                   target={href.startsWith("mailto") ? "_self" : "_blank"}
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground transition-colors social-icon border border-border bg-card"
+                  className="w-10 h-10 rounded-xl inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors social-icon border border-border bg-card shadow-sm"
                   whileHover={{ scale: 1.15, y: -3 }}
                   whileTap={{ scale: 0.9 }}
                   initial={{ opacity: 0, y: 10 }}
