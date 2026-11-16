@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail, Share2, Check } from "lucide-react";
+import { toast } from "sonner";
 import { MagneticButton } from "@/components/motion-primitives";
 
 interface FooterProps {
@@ -20,6 +21,27 @@ export function Footer({
   linkedinUrl = "https://www.linkedin.com/in/musman78",
   email = "usmankousar772@gmail.com",
 }: FooterProps) {
+  const [shared, setShared] = useState(false);
+
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? window.location.origin : "https://muhammadusman.dev";
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: "Muhammad Usman – Full-Stack MERN & Next.js Developer",
+          url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        setShared(true);
+        toast.success("Portfolio link copied to clipboard!");
+        setTimeout(() => setShared(false), 2000);
+      }
+    } catch {
+      // User cancelled native share sheet
+    }
+  };
+
   return (
     <footer className="pt-12 pb-24 relative border-t border-border overflow-hidden">
       {/* Animated gradient line at top */}
@@ -101,6 +123,23 @@ export function Footer({
                 </motion.a>
               </MagneticButton>
             ))}
+            <MagneticButton strength={0.4}>
+              <motion.button
+                type="button"
+                onClick={handleShare}
+                aria-label="Share Portfolio"
+                title="Share / Copy Portfolio Link"
+                className="w-10 h-10 rounded-xl inline-flex items-center justify-center text-muted-foreground hover:text-amber-500 transition-colors social-icon border border-border bg-card shadow-sm"
+                whileHover={{ scale: 1.15, y: -3 }}
+                whileTap={{ scale: 0.9 }}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.6 }}
+              >
+                {shared ? <Check className="h-4 w-4 text-emerald-500" /> : <Share2 className="h-4 w-4" />}
+              </motion.button>
+            </MagneticButton>
           </div>
         </motion.div>
       </div>

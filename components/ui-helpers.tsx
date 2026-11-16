@@ -160,28 +160,112 @@ export function TiltCard({
 }
 
 export function CodeWindow({ onOpenTerminal, devName }: { onOpenTerminal: () => void; devName: string }) {
+  const [activeTab, setActiveTab] = useState<"config" | "api" | "run">("config");
+  const [running, setRunning] = useState(false);
+  const [latency, setLatency] = useState<number | null>(18);
+
+  const triggerRun = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveTab("run");
+    setRunning(true);
+    const t0 = performance.now();
+    setTimeout(() => {
+      setLatency(Math.max(12, Math.min(38, Math.round(performance.now() - t0 - 290))));
+      setRunning(false);
+    }, 320);
+  };
+
   return (
-    <div className="code-window animate-float cursor-pointer group" style={{ animationDuration: "6s" }} onClick={onOpenTerminal}>
-      <div className="code-window-header flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <div className="code-dot red" />
-          <div className="code-dot yellow" />
-          <div className="code-dot green" />
-          <span className="code-filename">developer.config.ts</span>
+    <div className="code-window animate-float group" style={{ animationDuration: "6s" }}>
+      <div className="code-window-header flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <div className="code-dot red shrink-0" />
+          <div className="code-dot yellow shrink-0" />
+          <div className="code-dot green shrink-0" />
+          <div className="flex items-center gap-1 ml-1.5 overflow-x-auto">
+            {(
+              [
+                { id: "config", label: "developer.ts" },
+                { id: "api", label: "api.route.ts" },
+                { id: "run", label: "▶ 200 OK" },
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (tab.id === "run") triggerRun(e);
+                  else setActiveTab(tab.id);
+                }}
+                className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                    : "text-slate-400 hover:text-white"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <span className="text-[10px] font-mono text-amber-400 opacity-80 group-hover:opacity-100 flex items-center gap-1">
-          <Terminal className="w-3 h-3" /> Click to open CLI
-        </span>
+        <button
+          type="button"
+          onClick={onOpenTerminal}
+          className="text-[10px] font-mono text-amber-400 opacity-85 hover:opacity-100 flex items-center gap-1 shrink-0"
+          title="Open Interactive CLI"
+        >
+          <Terminal className="w-3 h-3" /> CLI
+        </button>
       </div>
-      <div className="code-body" style={{ color: "rgba(255,255,255,0.85)" }}>
-        <span className="code-line"><span className="cm">// Full-Stack Architect Profile</span></span>
-        <span className="code-line"><span className="ck">export const</span> <span className="cv">developer</span> <span className="cp">= {"{"}</span></span>
-        <span className="code-line">{"  "}<span className="cv">name</span><span className="cp">:</span> <span className="cs">&quot;{devName}&quot;</span><span className="cp">,</span></span>
-        <span className="code-line">{"  "}<span className="cv">stack</span><span className="cp">: [</span><span className="cs">&quot;MERN&quot;</span><span className="cp">,</span> <span className="cs">&quot;Next.js 15&quot;</span><span className="cp">,</span> <span className="cs">&quot;TypeScript&quot;</span><span className="cp">],</span></span>
-        <span className="code-line">{"  "}<span className="cv">rating</span><span className="cp">:</span> <span className="cs">&quot;5.0 ★ on Fiverr&quot;</span><span className="cp">,</span></span>
-        <span className="code-line">{"  "}<span className="cv">status</span><span className="cp">:</span> <span className="cs">&quot;Available for Hire&quot;</span><span className="cp">,</span></span>
-        <span className="code-line">{"  "}<span className="cv">launchCLI</span><span className="cp">:</span> <span className="cb">() =&gt;</span> <span className="cs">&quot;Type &apos;help&apos; in console&quot;</span></span>
-        <span className="code-line"><span className="cp">{"}"}</span><span className="cp">;</span></span>
+
+      <div
+        className="code-body cursor-pointer"
+        style={{ color: "rgba(255,255,255,0.85)", minHeight: "188px" }}
+        onClick={onOpenTerminal}
+      >
+        {activeTab === "config" && (
+          <>
+            <span className="code-line"><span className="cm">// Full-Stack Architect Profile</span></span>
+            <span className="code-line"><span className="ck">export const</span> <span className="cv">developer</span> <span className="cp">= {"{"}</span></span>
+            <span className="code-line">{"  "}<span className="cv">name</span><span className="cp">:</span> <span className="cs">&quot;{devName}&quot;</span><span className="cp">,</span></span>
+            <span className="code-line">{"  "}<span className="cv">stack</span><span className="cp">: [</span><span className="cs">&quot;MERN&quot;</span><span className="cp">,</span> <span className="cs">&quot;Next.js 15&quot;</span><span className="cp">,</span> <span className="cs">&quot;TypeScript&quot;</span><span className="cp">],</span></span>
+            <span className="code-line">{"  "}<span className="cv">rating</span><span className="cp">:</span> <span className="cs">&quot;5.0 ★ on Fiverr&quot;</span><span className="cp">,</span></span>
+            <span className="code-line">{"  "}<span className="cv">status</span><span className="cp">:</span> <span className="cs">&quot;Available for Hire&quot;</span><span className="cp">,</span></span>
+            <span className="code-line">{"  "}<span className="cv">launchCLI</span><span className="cp">:</span> <span className="cb">() =&gt;</span> <span className="cs">&quot;Click to open terminal&quot;</span></span>
+            <span className="code-line"><span className="cp">{"}"}</span><span className="cp">;</span></span>
+          </>
+        )}
+
+        {activeTab === "api" && (
+          <>
+            <span className="code-line"><span className="cm">// Production API Pipeline</span></span>
+            <span className="code-line"><span className="ck">export async function</span> <span className="cb">GET</span><span className="cp">() {"{"}</span></span>
+            <span className="code-line">{"  "}<span className="ck">await</span> <span className="cb">connectToDatabase</span><span className="cp">();</span></span>
+            <span className="code-line">{"  "}<span className="ck">const</span> <span className="cv">auth</span> <span className="cp">=</span> <span className="cb">verifyJWT</span><span className="cp">();</span></span>
+            <span className="code-line">{"  "}<span className="ck">return</span> <span className="cv">Response</span><span className="cp">.</span><span className="cb">json</span><span className="cp">({"{"}</span></span>
+            <span className="code-line">{"    "}<span className="cv">uptime</span><span className="cp">:</span> <span className="cs">&quot;99.98%&quot;</span><span className="cp">,</span> <span className="cv">security</span><span className="cp">:</span> <span className="cs">&quot;A+&quot;</span></span>
+            <span className="code-line">{"  "}<span className="cp">{"}"});</span></span>
+            <span className="code-line"><span className="cp">{"}"}</span></span>
+          </>
+        )}
+
+        {activeTab === "run" && (
+          <>
+            <span className="code-line">
+              <span className="cm">
+                {running ? "// Dispatching GET /api/profile..." : `// HTTP/2 200 OK • ${latency ?? 18}ms`}
+              </span>
+            </span>
+            <span className="code-line"><span className="cp">{"{"}</span></span>
+            <span className="code-line">{"  "}<span className="cv">&quot;ok&quot;</span><span className="cp">:</span> <span className="ck">true</span><span className="cp">,</span></span>
+            <span className="code-line">{"  "}<span className="cv">&quot;architect&quot;</span><span className="cp">:</span> <span className="cs">&quot;{devName}&quot;</span><span className="cp">,</span></span>
+            <span className="code-line">{"  "}<span className="cv">&quot;engine&quot;</span><span className="cp">:</span> <span className="cs">&quot;Next.js 15 + MongoDB Atlas&quot;</span><span className="cp">,</span></span>
+            <span className="code-line">{"  "}<span className="cv">&quot;latency&quot;</span><span className="cp">:</span> <span className="cs">&quot;{running ? "..." : `${latency ?? 18}ms`}&quot;</span><span className="cp">,</span></span>
+            <span className="code-line">{"  "}<span className="cv">&quot;available&quot;</span><span className="cp">:</span> <span className="ck">true</span></span>
+            <span className="code-line"><span className="cp">{"}"}</span></span>
+          </>
+        )}
       </div>
     </div>
   );
