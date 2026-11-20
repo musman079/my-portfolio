@@ -26,6 +26,7 @@ import { JourneySection } from "@/components/sections/journey-section";
 import { SkillsSection } from "@/components/sections/skills-section";
 import { ServicesSection } from "@/components/sections/services-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
+import { ArchitectureLab } from "@/components/sections/architecture-lab";
 import { ReviewsSection } from "@/components/sections/reviews-section";
 import { FaqSection } from "@/components/sections/faq-section";
 import { ContactSection } from "@/components/sections/contact-section";
@@ -435,6 +436,11 @@ export default function Portfolio() {
         onSelectProject={(p) => setSelectedProject(p)}
         githubUrl={dynProfile.github || "https://github.com/mani78979"}
       />
+
+      <div className="section-divider max-w-5xl" />
+
+      {/* ====== INTERACTIVE LIVE SYSTEM ARCHITECTURE LAB ====== */}
+      <ArchitectureLab />
 
       <div className="section-divider max-w-5xl" />
 
